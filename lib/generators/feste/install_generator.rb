@@ -10,7 +10,7 @@ module Feste
       def copy_migrations
         migration_template "create_feste_emails"
         migration_template "create_feste_subscribers"
-        migration_template "create_feste_canceled_subscriptions"
+        migration_template "create_feste_cancelled_subscriptions"
       end
 
       protected

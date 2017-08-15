@@ -1,5 +1,8 @@
 require "bundler/setup"
 require "feste"
+require "action_mailer"
+
+Dir[File.expand_path("../support/**/*.rb", __FILE__)].sort.each { |file| require file }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
