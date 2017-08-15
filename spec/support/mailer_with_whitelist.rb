@@ -1,5 +1,3 @@
-# require "actionmailer"
-
 class MailerWithWhitelist < ActionMailer::Base
   include Feste::Mailer
 

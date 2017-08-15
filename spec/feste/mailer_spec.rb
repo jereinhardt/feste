@@ -13,17 +13,8 @@ RSpec.describe Feste::Mailer do
     end
   end
 
-  describe "::InstanceMethods.mail" do
+  describe "::InstanceMethods.mail", :stubbed_email do
     it "creates a Feste::Processor instance and processes an email" do
-      mail_message = Mail.new do
-        to "test@email.com"
-        from "test@test.com"
-        subject "test"
-        body "this"
-      end
-      allow_any_instance_of(ActionMailer::Base).
-        to(receive(:mail)).
-        and_return(mail_message)
       message = MailerWithWhitelist.whitelist_action("test@email.com")
       processor = instance_double(Feste::Processor, process: nil)
       allow(Feste::Processor).to receive(:new).and_return(processor)
