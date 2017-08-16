@@ -26,9 +26,9 @@ module Feste
 
     module ClassMethods
       def allow_subscriptions(only: [], except: [])
-        if !only.empty?
+        if only.any?
           self.feste_whitelist = only
-        elsif !except.empty?
+        elsif except.any?
           self.feste_blacklist = except
         end
       end

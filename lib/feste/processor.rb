@@ -20,11 +20,9 @@ module Feste
     private
 
     def stop_delivery_to_unsubscribed_emails!
-      new_destinations = message.to
-      message.to.each do |email|
-        new_destinations.delete(email) if unsubscibed_email?(email)
+      message.to = message.to.reject do |email|
+        unsubscibed_email?(email)
       end
-      message.to = new_destinations
     end
 
     def unsubscibed_email?(email)
