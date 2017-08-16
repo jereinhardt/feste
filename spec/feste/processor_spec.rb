@@ -128,7 +128,7 @@ RSpec.describe Feste::Processor do
   def create_email(mailer:,action:)
     feste_email = Feste::Email.create(mailer: mailer, action: action)
     allow(Feste::Email).to(
-      receive(:find_by).
+      receive(:find_or_create_by).
         with(mailer: mailer, action: action).
         and_return(feste_email)
     )
@@ -139,14 +139,9 @@ RSpec.describe Feste::Processor do
     cancellation = Feste::CancelledSubscription.
       create(email: email, subscriber: subscriber, cancelled: cancelled)
     allow(Feste::CancelledSubscription).to(
-      receive(:find_by).
-        with(subscriber: subscriber, email: email, cancelled: cancelled).
+      receive(:find_or_create_by).
+        with(subscriber: subscriber, email: email).
         and_return(cancellation)
-    )
-    allow(Feste::CancelledSubscription).to(
-      receive(:find_by).
-        with(subscriber: subscriber, email: email, cancelled: !cancelled).
-        and_return(nil)
     )
     cancellation
   end

@@ -28,13 +28,14 @@ module Feste
     end
 
     def unsubscibed_email?(email)
-      sub = Subscriber.find_or_create_by(email: email)
+      sub = Feste::Subscriber.find_or_create_by(email: email)
       return true if sub.cancelled
-      Feste::CancelledSubscription.cancellation_exists?(
-        subscriber: sub, 
-        mailer: mailer.class.name,
-        action: action.to_s
+      email = Feste::Email.find_or_create_by(mailer: mailer.class.name, action: action.to_s)
+      cancellation = Feste::CancelledSubscription.find_or_create_by(
+        subscriber: sub,
+        email: email
       )
+      cancellation.cancelled
     end
   end
 end
