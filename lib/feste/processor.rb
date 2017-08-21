@@ -1,12 +1,13 @@
 module Feste
   class Processor
-    def initialize(message, mailer, action)
+    def initialize(message, mailer, action, user)
       @message = message
       @mailer = mailer
       @action = action
+      @user = user
     end
 
-    attr_reader :message, :mailer, :action
+    attr_reader :message, :mailer, :action, :user
 
     def process
       if mailer.class.feste_whitelist.any?
@@ -14,26 +15,27 @@ module Feste
       elsif mailer.class.feste_blacklist.any?
         return true if mailer.class.feste_blacklist.include?(action)
       end
-      stop_delivery_to_unsubscribed_emails!
+      stop_delivery_to_unsubscribed_user! if delivery_can_be_stopped?
     end
 
     private
 
-    def stop_delivery_to_unsubscribed_emails!
-      message.to = message.to.reject do |email|
-        unsubscibed_email?(email)
+    def stop_delivery_to_unsubscribed_user!
+      subscriber = Feste::Subscriber.find_or_create_by(email: user.email_source)
+      if subscriber.cancelled
+        message.to = []
+        return true
       end
-    end
-
-    def unsubscibed_email?(email)
-      sub = Feste::Subscriber.find_or_create_by(email: email)
-      return true if sub.cancelled
       email = Feste::Email.find_or_create_by(mailer: mailer.class.name, action: action.to_s)
       cancellation = Feste::CancelledSubscription.find_or_create_by(
-        subscriber: sub,
+        subscriber: subscriber,
         email: email
       )
-      cancellation.cancelled
+      message.to = [] if cancellation.cancelled
+    end
+
+    def delivery_can_be_stopped?
+      message.to.size == 1 && Feste::Subscriber.find_by(email: user.email_source).present?
     end
   end
 end

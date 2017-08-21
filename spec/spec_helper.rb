@@ -21,7 +21,7 @@ RSpec.configure do |config|
 
   config.before(:each, :stubbed_email) do
     mail_message = Mail.new do
-      to "test@email.com"
+      to ["test@email.com"]
       from "test@test.com"
       subject "test"
       body "this"

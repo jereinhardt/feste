@@ -3,11 +3,13 @@ class MailerWithWhitelist < ActionMailer::Base
 
   allow_subscriptions only: [:whitelist_action]
 
-  def whitelist_action(email)
-    mail(to: email, from: "test@test.com", subject: "test")
+  def whitelist_action(user)
+    subscriber(user)
+    mail(to: user.email_address, from: "test@test.com", subject: "test")
   end
 
-  def other_action(email)
-    mail(to: email, from: "test@test.com", subject: "test")
+  def other_action(user)
+    subscriber(user)
+    mail(to: user.email_address, from: "test@test.com", subject: "test")
   end
 end

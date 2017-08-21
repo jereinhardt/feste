@@ -4,84 +4,84 @@ RSpec.describe Feste::Processor do
   describe "#process" do
     context "when there is a whitelist set", :stubbed_email do
       it "processes an action in the whitelist" do
+        user = User.new
         mailer = instance_double(MailerWithWhitelist, class: MailerWithWhitelist)
-        message = MailerWithWhitelist.whitelist_action("test@test.com")
-        processor = Feste::Processor.new(message, mailer, :whitelist_action)
-        allow(processor).to receive(:stop_delivery_to_unsubscribed_emails!)
+        message = stubbed_email_to(user.email_address)
+        processor = Feste::Processor.new(message, mailer, :whitelist_action, user)
+        allow(processor).to receive(:delivery_can_be_stopped?)
 
         processor.process
 
-        expect(processor).to have_received(:stop_delivery_to_unsubscribed_emails!)
+        expect(processor).to have_received(:delivery_can_be_stopped?)
       end
 
       it "does not process an action that is not on the whitelist" do
+        user = User.new
         mailer = instance_double(MailerWithWhitelist, class: MailerWithWhitelist)
-        message = MailerWithWhitelist.other_action("test@test.com")
-        processor = Feste::Processor.new(message, mailer, :other_action)
-        allow(processor).to receive(:stop_delivery_to_unsubscribed_emails!)
+        message = stubbed_email_to(user.email_address)
+        processor = Feste::Processor.new(message, mailer, :other_action, user)
+        allow(processor).to receive(:delivery_can_be_stopped?)
 
         result = processor.process
 
         expect(result).to be true
-        expect(processor).not_to have_received(:stop_delivery_to_unsubscribed_emails!)
+        expect(processor).not_to have_received(:delivery_can_be_stopped?)
       end
     end
 
     context "when there is a blacklist set", :stubbed_email do
       it "proceses an action not on the blacklist" do
+        user = User.new
         mailer = instance_double(MailerWithBlacklist, class: MailerWithBlacklist)
         message = MailerWithBlacklist.whitelist_action("test@test.com")
-        processor = Feste::Processor.new(message, mailer, :whitelist_action)
-        allow(processor).to receive(:stop_delivery_to_unsubscribed_emails!)
+        processor = Feste::Processor.new(message, mailer, :whitelist_action, user)
+        allow(processor).to receive(:delivery_can_be_stopped?)
 
         processor.process
 
-        expect(processor).to have_received(:stop_delivery_to_unsubscribed_emails!)
+        expect(processor).to have_received(:delivery_can_be_stopped?)
       end
 
       it "does not process an action on the blacklist" do
+        user = User.new
         mailer = instance_double(MailerWithBlacklist, class: MailerWithBlacklist)
         message = MailerWithBlacklist.blacklist_action("test@test.com")
-        processor = Feste::Processor.new(message, mailer, :blacklist_action)
-        allow(processor).to receive(:stop_delivery_to_unsubscribed_emails!)
+        processor = Feste::Processor.new(message, mailer, :blacklist_action, user)
+        allow(processor).to receive(:delivery_can_be_stopped?)
 
         result = processor.process
 
         expect(result).to be true
-        expect(processor).not_to have_received(:stop_delivery_to_unsubscribed_emails!)
+        expect(processor).not_to have_received(:delivery_can_be_stopped?)
       end
     end
 
     context "when a user has unsubscribed to all emails" do
-      it "deletes that user's email from the devliery destinations" do
-        email = "test@email.com"
-        allowed_email = "allowed@email.com"
+      it "deletes all message destinations" do
+        user = User.new
 
-        subscriber = create_subscriber(email: email, cancelled: true)
-        allowed_subscriber = create_subscriber(email: allowed_email, cancelled: false)
-
+        subscriber = create_subscriber(email: user.email_address, cancelled: true)
         mailer = instance_double(MainMailer, class: MainMailer)
-        message = stubbed_email_to([email, allowed_email])
+        message = stubbed_email_to(user.email_address)
         
-        Feste::Processor.new(message, mailer, :send_mail).process
+        Feste::Processor.new(message, mailer, :send_mail, user).process
 
-        expect(message.to).not_to include(email)
-        expect(message.to).to include(allowed_email)
+        expect(message.to.empty?).to be true
       end
     end
 
     context "when a user has unsubscribed to an email" do
-      it "deletes delivery destinations that have unsubscribed to that mailer" do
-        email = "test@test.com"
+      it "deletes all message destinations" do
+        user = User.new
 
-        subscriber = create_subscriber(email: email, cancelled: false)
+        subscriber = create_subscriber(email: user.email_address, cancelled: false)
         feste_email = create_email(mailer: MainMailer.name, action: "send_mail")
         create_cancellation(email: feste_email, subscriber: subscriber, cancelled: true)
 
         mailer = instance_double(MainMailer, class: MainMailer)
-        message = stubbed_email_to(email)
+        message = stubbed_email_to(user.email_address)
 
-        Feste::Processor.new(message, mailer, :send_mail).process
+        Feste::Processor.new(message, mailer, :send_mail, user).process
 
         expect(message.to.empty?).to be true        
       end
@@ -89,18 +89,18 @@ RSpec.describe Feste::Processor do
 
     context "when a user has not unsubscribed to an email" do
       it "sends the email" do
-        email = "test@test.com"
+        user = User.new
 
-        subscriber = create_subscriber(email: email, cancelled: false)
+        subscriber = create_subscriber(email: user.email_address, cancelled: false)
         feste_email = create_email(mailer: MainMailer.name, action: "send_mail")
         create_cancellation(email: feste_email, subscriber: subscriber, cancelled: false)
 
         mailer = instance_double(MainMailer, class: MainMailer)
-        message = stubbed_email_to(email)
+        message = stubbed_email_to(user.email_address)
 
-        Feste::Processor.new(message, mailer, :send_mail).process
+        Feste::Processor.new(message, mailer, :send_mail, user).process
 
-        expect(message.to).to eq([email])    
+        expect(message.to).to eq([user.email_address])    
       end
     end
   end
@@ -135,7 +135,7 @@ RSpec.describe Feste::Processor do
     feste_email
   end
 
-  def create_cancellation(email:,subscriber:,cancelled:false)
+  def create_cancellation(email:,subscriber:,cancelled:false,token:"token")
     cancellation = Feste::CancelledSubscription.
       create(email: email, subscriber: subscriber, cancelled: cancelled)
     allow(Feste::CancelledSubscription).to(

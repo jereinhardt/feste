@@ -3,11 +3,13 @@ class MailerWithBlacklist < ActionMailer::Base
 
   allow_subscriptions except: [:blacklist_action]
 
-  def whitelist_action(email)
-    mail(to: email, from: "test@test.com", subject: "test")
+  def whitelist_action(user)
+    subscriber(user)
+    mail(to: user.email_address, from: "test@test.com", subject: "test")
   end
 
-  def blacklist_action(email)
-    mail(to: email, from: "test@test.com", subject: "test")
+  def blacklist_action(user)
+    subscriber(user)
+    mail(to: user.email_address, from: "test@test.com", subject: "test")
   end
 end
