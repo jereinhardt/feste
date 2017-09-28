@@ -3,7 +3,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
     create_table :feste_cancelled_subscriptions do |t|
       t.integer :subscriber_id, null: false
       t.integer :email_id, null: false
-      t.boolean :cancelled, null: false, default: false,
+      t.boolean :cancelled, null: false, default: false
       t.string :token, null: false
     end
 
@@ -14,6 +14,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
 
     create_table :feste_subscribers do |t|
       t.string :email, null: false
+      t.string :token, null: false
       t.boolean :cancelled, null: false, default: true
     end
 

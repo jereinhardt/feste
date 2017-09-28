@@ -2,10 +2,7 @@ require "active_record"
 
 require "feste/version"
 require "feste/engine" if defined?(Rails)
-require "feste/email"
 require "feste/user"
-require "feste/subscriber"
-require "feste/cancelled_subscription"
 require "feste/processor"
 require "feste/mailer"
 

@@ -40,15 +40,18 @@ module Feste
     end
 
     def subscription_params
-      params.require(:cancelled_subscription).permit(:cancelled, user: [:cancelled, :email])
+      params.require(:cancelled_subscription).permit(
+        :cancelled,
+        subscriber: [:cancelled, :email]
+      )
     end
 
     def cancellation_params
-      subscription_params.except(:user)
+      subscription_params.except(:subscriber)
     end
 
     def user_params
-      subscription_params[:user].compact
+      subscription_params[:subscriber].compact
     end
   end
 end
