@@ -1,4 +1,4 @@
-Feste is an easy way to give your users the ability to subscribe and unsubscribe to select emails that come from your application.
+Feste is an easy way to give your users the ability to subscribe and unsubscribe to emails that come from your application.
 
 ## Installation
 
@@ -23,7 +23,7 @@ mount Feste::Engine => "/feste"
 
 ### Model
 
-In the model that holds your users' data, include the `Feste::User`.
+In the model that holds your users' data, include `Feste::User`.
 
 ```ruby
 class User < ApplicationRecord
@@ -31,7 +31,7 @@ class User < ApplicationRecord
 end
 ```
 
-Feste identifies your users by email address.  Feste assumes that your user model has an `email` attribute to reference a user's email address.  If you access your user's email through a different attribute or method, you can tell Feste the correct alias using `email_source`.
+Feste identifies your users by email address.  Feste assumes that your user model has an `email` attribute to reference a user's email address.  If you access your user's email through a different attribute or method, you can tell Feste the correct alias using `subscriber_email_source`.
 
 ```ruby
 class User < ApplicationRecord

@@ -15,7 +15,7 @@ module Feste
       elsif mailer.class.feste_blacklist.any?
         return true if mailer.class.feste_blacklist.include?(action)
       end
-      stop_delivery_to_unsubscribed_user! if delivery_can_be_stopped?
+      stop_delivery_to_unsubscribed_user!
     end
 
     private
@@ -32,10 +32,6 @@ module Feste
         email: email
       )
       message.to = [] if cancellation.cancelled
-    end
-
-    def delivery_can_be_stopped?
-      message.to.size == 1 && Feste::Subscriber.find_by(email: user.email_source).present?
     end
   end
 end

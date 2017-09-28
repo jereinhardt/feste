@@ -15,11 +15,21 @@ module Feste
       cancellation.token
     end
 
+    def decoded_token
+      decode_string = Base64.decode64(token).split("|")
+      {
+        email: decode_string[0],
+        mailer: decode_string[1],
+        action: decode_string[2]
+      }
+    end
+ 
     private
 
     def generate_token
       if !token
-        token = Base64.urlsafe_encode64 "#{subscriber.email}|#{email.mailer}|#{email.action}"
+        token = Base64.
+          urlsafe_encode64 "#{subscriber.email}|#{email.mailer}|#{email.action}"
       end
     end
   end

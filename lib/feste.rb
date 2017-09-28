@@ -1,5 +1,7 @@
+require "active_record"
+
 require "feste/version"
-require "feste/engine"
+require "feste/engine" if defined?(Rails)
 require "feste/email"
 require "feste/user"
 require "feste/subscriber"

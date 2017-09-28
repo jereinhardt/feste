@@ -1,0 +1,9 @@
+<%= form_for @cancelled_subscription do |f| %>
+  <%= f.label :cancelled %>
+  <%= f.check_box :cancelled %>
+  <%= f.fields_for @cancelled_subscription.user do |user_form| %>
+    <%= user_form.text_field :email %>
+    <%= user_form.check_box :cancelled %>
+  <% end %>
+  <%= f.submit "submit" %>
+<% end %>

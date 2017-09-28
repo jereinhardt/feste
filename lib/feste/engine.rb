@@ -1,5 +1,5 @@
 module Feste
   class Engine < ::Rails::Engine
-    #  puts stuff in the engine
+    isolate_namespace Feste
   end
 end

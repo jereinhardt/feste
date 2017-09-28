@@ -1,6 +1,4 @@
 Feste::Engine.routes.draw do
-  get "cancelled_subscription/:token", to: "cancelled_subscriptions#show", as: :cancelled_subscription
-  put "cancelled_subscription/:token", to: "cancelled_subscriptions#update"
-  patch "cancelled_subscription/:token", to: "cancelled_subscriptions#update"
-  # resources :cancelled_subscriptions, only: [:show, :update]
+  get "cancelled_subscriptions/:token", to: "cancelled_subscriptions#new", as: :new_cancelled_subscription
+  post "cancelled_subscriptions/:token", to: "cancelled_subscriptions#create", as: :cancelled_subscription
 end

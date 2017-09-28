@@ -8,11 +8,11 @@ RSpec.describe Feste::Processor do
         mailer = instance_double(MailerWithWhitelist, class: MailerWithWhitelist)
         message = stubbed_email_to(user.email_address)
         processor = Feste::Processor.new(message, mailer, :whitelist_action, user)
-        allow(processor).to receive(:delivery_can_be_stopped?)
+        allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         processor.process
 
-        expect(processor).to have_received(:delivery_can_be_stopped?)
+        expect(processor).to have_received(:stop_delivery_to_unsubscribed_user!)
       end
 
       it "does not process an action that is not on the whitelist" do
@@ -20,12 +20,12 @@ RSpec.describe Feste::Processor do
         mailer = instance_double(MailerWithWhitelist, class: MailerWithWhitelist)
         message = stubbed_email_to(user.email_address)
         processor = Feste::Processor.new(message, mailer, :other_action, user)
-        allow(processor).to receive(:delivery_can_be_stopped?)
+        allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         result = processor.process
 
         expect(result).to be true
-        expect(processor).not_to have_received(:delivery_can_be_stopped?)
+        expect(processor).not_to have_received(:stop_delivery_to_unsubscribed_user!)
       end
     end
 
@@ -35,11 +35,11 @@ RSpec.describe Feste::Processor do
         mailer = instance_double(MailerWithBlacklist, class: MailerWithBlacklist)
         message = MailerWithBlacklist.whitelist_action("test@test.com")
         processor = Feste::Processor.new(message, mailer, :whitelist_action, user)
-        allow(processor).to receive(:delivery_can_be_stopped?)
+        allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         processor.process
 
-        expect(processor).to have_received(:delivery_can_be_stopped?)
+        expect(processor).to have_received(:stop_delivery_to_unsubscribed_user!)
       end
 
       it "does not process an action on the blacklist" do
@@ -47,12 +47,12 @@ RSpec.describe Feste::Processor do
         mailer = instance_double(MailerWithBlacklist, class: MailerWithBlacklist)
         message = MailerWithBlacklist.blacklist_action("test@test.com")
         processor = Feste::Processor.new(message, mailer, :blacklist_action, user)
-        allow(processor).to receive(:delivery_can_be_stopped?)
+        allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         result = processor.process
 
         expect(result).to be true
-        expect(processor).not_to have_received(:delivery_can_be_stopped?)
+        expect(processor).not_to have_received(:stop_delivery_to_unsubscribed_user!)
       end
     end
 
