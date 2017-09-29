@@ -15,7 +15,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
     create_table :feste_subscribers do |t|
       t.string :email, null: false
       t.string :token, null: false
-      t.boolean :cancelled, null: false, default: true
+      t.boolean :cancelled, null: false, default: false
     end
 
     add_index :feste_cancelled_subscriptions, :subscriber_id

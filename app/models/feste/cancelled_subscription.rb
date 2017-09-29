@@ -5,10 +5,10 @@ module Feste
 
     before_create :generate_token
 
-    def self.get_token_for(recipient, mailer, action)
-      user = Feste::User.find_or_create_by(email: recipient.email_source)
+    def self.get_token_for(user, mailer, action)
+      subscriber = Feste::Subscriber.find_or_create_by(email: user.email_source)
       email = Feste::Email.find_or_create_by(mailer: mailer, action: action)
-      cancellation = find_or_create_by(user: user, email: email)
+      cancellation = find_or_create_by(subscriber: subscriber, email: email)
       cancellation.token
     end
 

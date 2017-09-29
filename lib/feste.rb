@@ -14,6 +14,32 @@ module Feste
   end
 
   self.options = {
-    email_source: :email
+    email_source: :email,
+    host: "localhost:3000",
   }
+
+  def self.configure
+    begin
+      yield(Config)
+    rescue NoConfigurationError => e
+      puts "FESTE CONFIGURATION WARNING: #{e}"
+    end
+  end
+
+  module Config
+    def self.method_missing(meth, *args, &block)
+      key = meth.to_s.slice(0, meth.to_s.length - 1).to_sym
+      if Feste.options.has_key?(key)
+        Feste.options[key] = args[0]
+      else
+        raise(
+          NoConfigurationError,
+          "There is no configuration option for #{key}"
+        )
+      end
+    end
+  end
+
+  class NoConfigurationError < StandardError
+  end
 end

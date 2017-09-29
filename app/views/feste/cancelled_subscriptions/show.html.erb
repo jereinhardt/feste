@@ -1,8 +1,9 @@
-<%= form_for @cancelled_subscription do |f| %>
+<%= form_for @cancelled_subscription, url: cancelled_subscription_path(@cancelled_subscription.token) do |f| %>
   <%= f.label :cancelled %>
   <%= f.check_box :cancelled %>
   <%= f.fields_for @cancelled_subscription.subscriber do |user_form| %>
-    <%= user_form.text_field :email %>
+    <%= user_form.text_field :email, value: "" %>
+    <%= user_form.label :cancelled %>
     <%= user_form.check_box :cancelled %>
   <% end %>
   <%= f.submit "submit" %>

@@ -1,6 +1,7 @@
 module Feste
-  module Mailer
+  module Mailer    
     def self.included(klass)
+      klass.send(:prepend, Feste::Engine.routes.url_helpers)
       klass.send(:prepend, InstanceMethods)
       klass.extend ClassMethods
       klass.class_eval do
@@ -28,14 +29,18 @@ module Feste
       end
 
       def subscription_url
-        cancelled_subscription_url(token: subscription_token)
+        cancelled_subscription_url(
+          token: subscription_token,
+          host: Feste.options[:host]
+        )
       end
 
       def subscription_token
         action = caller_locations(1,1)[0].label.to_s
         mailer = self.class.name
         user = @_feste_user
-        @_subscription_token ||= Feste::CancelledSubscription.get_token_for(user, mailer, action)
+        @_subscription_token ||= 
+          Feste::CancelledSubscription.get_token_for(user, mailer, action)
       end
     end
 

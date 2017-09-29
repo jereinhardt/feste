@@ -1,5 +1,6 @@
 module Feste
-  class CancelledSubscriptionsControllers < ActionController::Base
+  class CancelledSubscriptionsController < ActionController::Base
+    before_action :given_email_matches_user?, only: [:update]
     protect_from_forgery with: :exception
 
     layout "feste/application"
@@ -9,13 +10,13 @@ module Feste
     end
 
     def update
-      if subscription.update(cancellation_params) && 
-        subject.update(user_params) &&
-        given_email_matches_user?
+       @cancelled_subscription = subscription
+      if @cancelled_subscription.update(cancellation_params) && 
+         @cancelled_subscription.subscriber.update(user_params)
         
-        render :show
+        redirect_to cancelled_subscription_path(subscription.token)
       else
-        redirect_to feste_cancelled_subscription_path(subscription.token)
+        render :show
       end
     end
 
@@ -23,15 +24,13 @@ module Feste
 
     def given_email_matches_user?
       if user_params[:email].present?
-        if subscription.user.email == user_params[:email]
-          return true
-        else
+        if subscription.subscriber.email != user_params[:email]
           flash[:notice] = "You do not have permission to unsubscribe from this email."
-          return false
+          redirect_to cancelled_subscription_path(subscription.token)
         end
       else
         flash[:notice] = "Please provide an email address."
-        return false
+        redirect_to cancelled_subscription_path(subscription.token)
       end
     end
 
