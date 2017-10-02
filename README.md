@@ -19,6 +19,18 @@ Once installed, you will need to mount Feste in your application
 mount Feste::Engine => "/feste"
 ```
 
+## Configuration
+
+There are a two configuration options you can give to Feste.  The first is `email_source`.  This is the attribute on your user model that references your user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method on your user model.  The second configuration option is `host`.  Feste needs to know the host of your application.  Most likely, you will store this in your ENV.  By default, it is set to `localhost:3000`.
+
+```ruby
+# initializers/feste.rb
+Feste.configure do |config|
+  config.email_source = :email
+  config.host = ENV["FESTE_HOST"]
+end
+```
+
 ## Usage
 
 ### Model
@@ -28,20 +40,6 @@ In the model that holds your users' data, include `Feste::User`.
 ```ruby
 class User < ApplicationRecord
   include Feste::User
-end
-```
-
-Feste identifies your users by email address.  Feste assumes that your user model has an `email` attribute to reference a user's email address.  If you access your user's email through a different attribute or method, you can tell Feste the correct alias using `subscriber_email_source`.
-
-```ruby
-class User < ApplicationRecord
-  include Feste::User
-
-  email_source :find_email_address
-
-  def find_email_address
-    # method that returns the user's email address
-  end
 end
 ```
 

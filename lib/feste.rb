@@ -4,6 +4,7 @@ require "feste/version"
 require "feste/engine" if defined?(Rails)
 require "feste/user"
 require "feste/processor"
+require "feste/template_helper"
 require "feste/mailer"
 
 module Feste
