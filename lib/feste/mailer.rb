@@ -1,9 +1,9 @@
 module Feste
   module Mailer    
     def self.included(klass)
-      klass.send(:prepend, Feste::Engine.routes.url_helpers)
-      klass.send(:prepend, InstanceMethods)
+      klass.include InstanceMethods
       klass.extend ClassMethods
+      klass.send(:add_template_helper, TemplateHelper)
       klass.class_eval do
         class_attribute :feste_whitelist
         class_attribute :feste_blacklist
@@ -16,8 +16,14 @@ module Feste
     module InstanceMethods
       def mail(headers = {}, &block)
         return message if @_mail_was_called && headers.blank? && !block
+        
+        mailer = self.class.name
+        action = caller_locations.find do |l| 
+          self.class.instance_methods(false).include?(l.label.to_sym)
+        end.label
 
-        action = caller_locations(1,1)[0].label.to_sym
+        generate_subscription_token!(mailer, action)
+
         message = super
 
         Feste::Processor.new(message, self, action, @_feste_user).process
@@ -28,16 +34,9 @@ module Feste
         @_feste_user = user
       end
 
-      def subscription_url
-        cancelled_subscription_url(
-          token: subscription_token,
-          host: Feste.options[:host]
-        )
-      end
+      private
 
-      def subscription_token
-        action = caller_locations(1,1)[0].label.to_s
-        mailer = self.class.name
+      def generate_subscription_token!(mailer, action)
         user = @_feste_user
         @_subscription_token ||= 
           Feste::CancelledSubscription.get_token_for(user, mailer, action)

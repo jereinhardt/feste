@@ -48,10 +48,10 @@ end
 In your mailer, include the `Feste::Mailer` module.  In your mailer actions, you need to register an instance of the model that includes Feste's user module.  You can do this using the `subscriber` method.
 
 ```ruby
-class PasswordMailer < ApplicationMailer
+class GreetingMailer < ApplicationMailer
   include Feste::Mailer
 
-  def send_password_reset_email(user)
+  def signup_email(user)
     subscriber(user)
     mail(to: user.email, from: "support@here.com")
   end
@@ -95,13 +95,33 @@ end
 
 ### View
 
-In order to create a link that allows users to manage their subscription, you can generate a url using the `subscription_url` method in your mailer, and assigning the value to an instance variable
+In our view file, you can use the helper method `subscription_url` to link to the page where users can manage their subscriptions.
 
-```ruby
-@subscription_url = subscription_url
+```html
+<a href="<%= subscription_url %>">click here to unsubscribe</a> 
 ```
 
-When a user clicks this link, they are taken to a page that allows them to unsubscribe to that specific email, or all emails coming from your application.  If they are already unsubscribed, they are given the option to resubscribe.
+When a user clicks this link, they are taken to a page that allows them to unsubscribe from all emails coming from your application that have the have included the `Feste::Mailer` module.  
+
+### Naming Your Emails
+
+When users manage their email subscriptions, a unique name is assigned to each email.  By default, this name is a humanized version of the action name.  However, it is encouraged that you assign custom names to each email to make them easier to identify.  To do this, add a key in your I18n translation file under the mailer action called `name`
+
+```
+# config/locales/en.yml
+
+en:
+  contact_mailer:
+    say_hi:
+      name: Greetings Email
+```
+
+
+### When not to use
+
+It is recommended you DO NOT include the `Feste::Mailer` module in any mailer that handles improtant emails, such as password resent emails.  If you do, make sure to blacklist any important mailer actions.
+
+It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, the `subscription_url` helper leads to a subsciption page meant only for the user targeted by the `subscriber` method in the mailer.  Exposing this page to other recipients may allow them to change another users subscription preferences.
 
 ## Development
 

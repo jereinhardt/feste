@@ -14,7 +14,7 @@ module Feste
       if @cancelled_subscription.update(cancellation_params) && 
          @cancelled_subscription.subscriber.update(user_params)
         
-        redirect_to cancelled_subscription_path(subscription.token)
+        redirect_to subscriber_path(subscription.subscriber.token)
       else
         render :show
       end
