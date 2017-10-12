@@ -10,18 +10,20 @@ gem 'feste'
 
 And then execute:
 
-    $ bundle
+    $ bundle install
+    $ rails generate feste:install
+    $ rake db:migrate
 
 Once installed, you will need to mount Feste in your application
 
 ```ruby
 # config/routes.rb
-mount Feste::Engine => "/feste"
+mount Feste::Engine => "/email-subscriptions"
 ```
 
 ## Configuration
 
-There are a two configuration options you can give to Feste.  The first is `email_source`.  This is the attribute on your user model that references your user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method on your user model.  The second configuration option is `host`.  Feste needs to know the host of your application.  Most likely, you will store this in your ENV.  By default, it is set to `localhost:3000`.
+There are a two configuration options you can give to Feste.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`.  Feste needs to know the host of your application.  Most likely, you will store this in your ENV.  By default, it is set to `localhost:3000`.
 
 ```ruby
 # initializers/feste.rb

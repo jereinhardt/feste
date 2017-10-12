@@ -1,10 +1,92 @@
-<%= form_for @cancelled_subscription, url: cancelled_subscription_path(@cancelled_subscription.token) do |f| %>
-  <%= f.label :cancelled %>
-  <%= f.check_box :cancelled %>
-  <%= f.fields_for @cancelled_subscription.subscriber do |user_form| %>
-    <%= user_form.text_field :email, value: "" %>
-    <%= user_form.label :cancelled %>
-    <%= user_form.check_box :cancelled %>
-  <% end %>
-  <%= f.submit "submit" %>
-<% end %>
+
+
+
+
+<button class="modal-open-button" data-js-modal-open="cancel-email">Unsubscribe from this email</button>
+<button class="modal-open-button" data-js-modal-open="cancel-user">Unsubscribe from all emails.</button>
+
+
+
+
+<div class="confirmation-modal-container hidden" data-js-modal-container="cancel-user">
+  <div class="modal-overlay" data-js-modal-close="true">
+    <div class="modal-content">
+      <%= form_for @cancelled_subscription, url: cancelled_subscription_path(@cancelled_subscription.token), class: "cancel-subscription-form" do |f| %>
+        <%= f.hidden_field :cancelled, value: true %>
+        <%= f.fields_for @cancelled_subscription.subscriber do |user_form| %>
+          <%= user_form.text_field :email, value: "" %>
+          <%= user_form.hidden_field :cancelled, value: true %>
+        <% end %>
+        <%= f.submit "submit" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="confirmation-modal-container hidden" data-js-modal-container="cancel-email">
+  <div class="modal-overlay" data-js-modal-close="true">
+    <div class="modal-content">
+      <%= form_for @cancelled_subscription, url: cancelled_subscription_path(@cancelled_subscription.token), class: "cancel-subscription-form" do |f| %>
+        <%= f.hidden_field :cancelled, value: true %>
+        <%= f.fields_for @cancelled_subscription.subscriber do |user_form| %>
+          <%= user_form.text_field :email, value: "" %>
+        <% end %>
+        <%= f.submit "submit" %>
+      <% end %>      
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  $(function() {
+    var $buttons = $("[data-js-modal-open]");
+    $buttons.on("click", function(event) {
+      event.preventDefault();
+
+      var $target = $(event.currentTarget);
+      var modalName = $target.data("js-modal-open");
+      var $modalContainer = $("[data-js-modal-container='" + modalName + "']");
+      openModal($modalContainer);
+    });
+
+    function openModal($modalContainer) {
+      $modalContainer.removeClass("hidden");
+      bindModalEvents($modalContainer);
+    }
+
+    function closeModal($modalContainer) {
+      $modalContainer.addClass("hidden");
+      unbindModalEvents($modalContainer);
+    }
+
+    function bindModalEvents($modalContainer) {
+      var $closeButtons = $modalContainer.find("[data-js-modal-close]");
+      $closeButtons.on("click", function(event) {
+        event.preventDefault();
+        closeModal($modalContainer);
+      });
+
+      var $form = $modalContainer.find("form");
+      $form.on("submit", function(event) {
+        var $required = $form.find("[data-js-required]");
+        var $errorMessages = $form.find("[data-js-error]");
+        var val = $required.find("input").val();
+        
+        $errorMessages.addClass("hidden");
+        if (!val) {
+          event.preventDefault();
+          $errorMessage.removeClass("hidden");
+        }
+      });
+    }
+
+    function unbindModalEvents($modalContainer) {
+      var $closeButtons = $modalContainer.find("[data-js-modal-close]");
+      $closeButtons.off("click");
+
+      var $form = $modalContainer.find("form");
+      $form.off("click");
+    }
+  })();
+</script>
