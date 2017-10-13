@@ -23,7 +23,7 @@ mount Feste::Engine => "/email-subscriptions"
 
 ## Configuration
 
-There are a two configuration options you can give to Feste.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`.  Feste needs to know the host of your application.  Most likely, you will store this in your ENV.  By default, it is set to `localhost:3000`.
+There are a two major configurate options Feste makes available.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`.  Feste needs to know the host of your application.  Most likely, you will store this in your ENV.  By default, it is set to `localhost:3000`.
 
 ```ruby
 # initializers/feste.rb
@@ -103,25 +103,11 @@ In our view file, you can use the helper method `subscription_url` to link to th
 <a href="<%= subscription_url %>">click here to unsubscribe</a> 
 ```
 
-When a user clicks this link, they are taken to a page that allows them to unsubscribe from all emails coming from your application that have the have included the `Feste::Mailer` module.  
-
-### Naming Your Emails
-
-When users manage their email subscriptions, a unique name is assigned to each email.  By default, this name is a humanized version of the action name.  However, it is encouraged that you assign custom names to each email to make them easier to identify.  To do this, add a key in your I18n translation file under the mailer action called `name`
-
-```
-# config/locales/en.yml
-
-en:
-  contact_mailer:
-    say_hi:
-      name: Greetings Email
-```
-
+When a user clicks this link, they are taken to a page that allows them to unsubscribe from the email they received, or all emails coming from your application.  If they unsubscribe from all emails, the only emails that will be stopped will be those coming from mailers that have Feste's Mailer module included.  That way, you don't have to worry about users unsubscribing from essential emails coming from your application.  
 
 ### When not to use
 
-It is recommended you DO NOT include the `Feste::Mailer` module in any mailer that handles improtant emails, such as password resent emails.  If you do, make sure to blacklist any important mailer actions.
+It is recommended you DO NOT include the `Feste::Mailer` module in any mailer that handles improtant emails, such as password reset emails.  If you do, make sure to blacklist any important mailer actions.
 
 It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, the `subscription_url` helper leads to a subsciption page meant only for the user targeted by the `subscriber` method in the mailer.  Exposing this page to other recipients may allow them to change another users subscription preferences.
 
