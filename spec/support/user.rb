@@ -1,11 +1,9 @@
 class User
   include Feste::User
 
-  subscriber_email_source :email_address
-
   def initialize(email = "test@test.com")
-    @email_address = email
+    @email = email
   end
 
-  attr_accessor :email_address
+  attr_accessor :email
 end

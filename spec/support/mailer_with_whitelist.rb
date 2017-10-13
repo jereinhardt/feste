@@ -5,11 +5,11 @@ class MailerWithWhitelist < ActionMailer::Base
 
   def whitelist_action(user)
     subscriber(user)
-    mail(to: user.email_address, from: "test@test.com", subject: "test")
+    mail(to: user.email, from: "test@test.com", subject: "test")
   end
 
   def other_action(user)
     subscriber(user)
-    mail(to: user.email_address, from: "test@test.com", subject: "test")
+    mail(to: user.email, from: "test@test.com", subject: "test")
   end
 end

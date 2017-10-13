@@ -9,7 +9,24 @@
     <style type="text/css">
       
       body {
-        background: #e1e1eb;
+        background: #ebebeb;
+        font-family: "Segoe UI",Arial,sans-serif;
+      }
+
+      .color-red {
+        color: #aa1111;
+      }
+
+      .background-red {
+        background: #aa1111;
+      }
+
+      .color-green {
+        color: #398c3c;
+      }
+
+      .background-green {
+        background: #398c3c;
       }
 
       .container {
@@ -25,16 +42,127 @@
         display: none;
       }
 
+      .subscription-button-containers,
+      .subscription-button-containers .button-container,
+      .unsubscribe-header {
+        text-align: center;
+      }
 
+      .subscription-button-containers .button-container {
+        padding: 10px 0;
+      }
+
+      .modal-open-button {
+        border: 0;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 18px;
+        border-radius: 30px;
+      }
+
+      .email-unsubscribe-button {
+        background
+      }
+
+      .user-unsubscribe-button {
+        background: #aa1111;
+        color: white;
+      }
+
+      .confirmation-modal-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .modal-overlay {
+        background-color: rgba(200, 200, 200, 0.8);
+        height: 100%;
+        width: 100%;
+      }
+
+      .modal-content {
+        background: white;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 40px;
+        text-align: center;
+        position: relative;
+        top: 50px;
+      }
+
+      .subscription-status {
+        font-size: 3em;
+      }
+
+      .unsubscribe-subheader,
+      .unsubscribe-header {
+        font-size: 1.5em;
+      }
+
+      .email-scope {
+        font-size: 1.6em;
+      }
+
+      .modal-header {
+        margin: 0;
+        font-size: 2em;
+      }
+
+      .modal-body {
+        color: #4f4d4b;
+        font-size: 1.2em;
+        font-weight: 600;
+      }
+
+      .email-field-container {
+        margin-bottom: 1.2em;
+      }
+
+      .email-field-input {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 5px;
+        font-size: 1.5em;
+        text-align: center;
+        font-weight: 300;
+      }
+
+      .form-submit-button {
+        border: 0;
+        padding: 15px;
+        font-size: 1.2em;
+        font-weight: 600;
+        color: white;
+        background: #aa1111;
+        border-radius: 30px;
+      }
+
+      .error-label {
+        color: #aa1111;
+        font-weight: 600;
+      }
+
+      .flash-message {
+        color: white;
+        padding: 15px;
+        text-align: center;
+        border-radius: 30px;
+        font-weight: 300;
+        font-size: 1.2em;
+        margin-bottom: 3em;
+      }
     </style>
 
     <div class="container">
 
-      <div id="header">  
-        <% if flash[:notice] %>
-          <%= flash[:notice] %>
-        <% end %>
-      </div>
+      <% if flash[:notice] || flash[:success] %>
+        <% message = flash[:notice] || flash[:success] %>
+          <h4 class="flash-message <%= flash[:notice].present? ? 'background-red' : 'background-green' %>"><%= message %></h4>
+      <% end %>
 
       <main class="main-body">
         

@@ -1,0 +1,11 @@
+<%= form_for @cancelled_subscription, url: cancelled_subscription_path(@cancelled_subscription.token), class: "cancel-subscription-form" do |f| %>
+  <%= f.hidden_field :cancelled, value: cancel_email %>
+  <div class="email-field-container" data-js-required="true">
+    <%= f.fields_for @cancelled_subscription.subscriber do |user_form| %>
+      <%= label_tag :email, "Please enter your email address", class: "error-label hidden", data: { js_error: true } %>
+      <%= user_form.text_field :email, value: "", placeholder: "enter your email", class: "email-field-input" %>
+      <%= user_form.hidden_field :cancelled, value: cancel_user %>
+    <% end %>
+  </div>
+  <%= f.submit submit, class: "form-submit-button" %>
+<% end %>

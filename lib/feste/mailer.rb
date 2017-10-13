@@ -3,7 +3,7 @@ module Feste
     def self.included(klass)
       klass.include InstanceMethods
       klass.extend ClassMethods
-      klass.send(:add_template_helper, TemplateHelper)
+      klass.send(:add_template_helper, TemplateHelper) if defined?(Rails)
       klass.class_eval do
         class_attribute :feste_whitelist
         class_attribute :feste_blacklist

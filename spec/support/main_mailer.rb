@@ -3,6 +3,6 @@ class MainMailer < ActionMailer::Base
 
   def send_mail(user)
     subscriber(user)
-    mail(to: user.email_address, from: "support@email", subject: "subject")
+    mail(to: user.email, from: "support@email", subject: "subject")
   end
 end

@@ -26,11 +26,10 @@ module Feste
         message.to = []
         return true
       end
-      email = Feste::Email.find_or_create_by(mailer: mailer.class.name, action: action.to_s)
-      cancellation = Feste::CancelledSubscription.find_or_create_by(
-        subscriber: subscriber,
-        email: email
-      )
+      email = Feste::Email.
+        find_or_create_by(mailer: mailer.class.name, action: action.to_s)
+      cancellation = Feste::CancelledSubscription.
+        find_or_create_by(subscriber: subscriber, email: email)
       message.to = [] if cancellation.cancelled
     end
   end

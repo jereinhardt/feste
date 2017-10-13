@@ -12,6 +12,10 @@ module Feste
       cancellation.token
     end
 
+    def self.cancelled
+      where(cancelled: true)
+    end
+
     def decoded_token
       decoded_string = Base64.decode64(token).split("|")
       {

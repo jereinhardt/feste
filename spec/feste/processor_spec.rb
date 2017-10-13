@@ -5,9 +5,13 @@ RSpec.describe Feste::Processor do
     context "when there is a whitelist set", :stubbed_email do
       it "processes an action in the whitelist" do
         user = User.new
-        mailer = instance_double(MailerWithWhitelist, class: MailerWithWhitelist)
-        message = stubbed_email_to(user.email_address)
-        processor = Feste::Processor.new(message, mailer, :whitelist_action, user)
+        mailer = instance_double(
+          MailerWithWhitelist,
+          class: MailerWithWhitelist
+        )
+        message = stubbed_email_to(user.email)
+        processor = Feste::Processor.
+          new(message, mailer, :whitelist_action, user)
         allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         processor.process
@@ -17,24 +21,32 @@ RSpec.describe Feste::Processor do
 
       it "does not process an action that is not on the whitelist" do
         user = User.new
-        mailer = instance_double(MailerWithWhitelist, class: MailerWithWhitelist)
-        message = stubbed_email_to(user.email_address)
+        mailer = instance_double(
+          MailerWithWhitelist,
+          class: MailerWithWhitelist
+        )
+        message = stubbed_email_to(user.email)
         processor = Feste::Processor.new(message, mailer, :other_action, user)
         allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         result = processor.process
 
         expect(result).to be true
-        expect(processor).not_to have_received(:stop_delivery_to_unsubscribed_user!)
+        expect(processor).
+          not_to have_received(:stop_delivery_to_unsubscribed_user!)
       end
     end
 
     context "when there is a blacklist set", :stubbed_email do
       it "proceses an action not on the blacklist" do
         user = User.new
-        mailer = instance_double(MailerWithBlacklist, class: MailerWithBlacklist)
+        mailer = instance_double(
+          MailerWithBlacklist,
+          class: MailerWithBlacklist
+        )
         message = MailerWithBlacklist.whitelist_action("test@test.com")
-        processor = Feste::Processor.new(message, mailer, :whitelist_action, user)
+        processor = Feste::Processor.
+          new(message, mailer, :whitelist_action, user)
         allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         processor.process
@@ -44,15 +56,20 @@ RSpec.describe Feste::Processor do
 
       it "does not process an action on the blacklist" do
         user = User.new
-        mailer = instance_double(MailerWithBlacklist, class: MailerWithBlacklist)
+        mailer = instance_double(
+          MailerWithBlacklist,
+          class: MailerWithBlacklist
+        )
         message = MailerWithBlacklist.blacklist_action("test@test.com")
-        processor = Feste::Processor.new(message, mailer, :blacklist_action, user)
+        processor = Feste::Processor.
+          new(message, mailer, :blacklist_action, user)
         allow(processor).to receive(:stop_delivery_to_unsubscribed_user!)
 
         result = processor.process
 
         expect(result).to be true
-        expect(processor).not_to have_received(:stop_delivery_to_unsubscribed_user!)
+        expect(processor).
+          not_to have_received(:stop_delivery_to_unsubscribed_user!)
       end
     end
 
@@ -60,9 +77,9 @@ RSpec.describe Feste::Processor do
       it "deletes all message destinations" do
         user = User.new
 
-        subscriber = create_subscriber(email: user.email_address, cancelled: true)
+        subscriber = create_subscriber(email: user.email, cancelled: true)
         mailer = instance_double(MainMailer, class: MainMailer)
-        message = stubbed_email_to(user.email_address)
+        message = stubbed_email_to(user.email)
         
         Feste::Processor.new(message, mailer, :send_mail, user).process
 
@@ -74,12 +91,16 @@ RSpec.describe Feste::Processor do
       it "deletes all message destinations" do
         user = User.new
 
-        subscriber = create_subscriber(email: user.email_address, cancelled: false)
+        subscriber = create_subscriber(email: user.email, cancelled: false)
         feste_email = create_email(mailer: MainMailer.name, action: "send_mail")
-        create_cancellation(email: feste_email, subscriber: subscriber, cancelled: true)
+        create_cancellation(
+          email: feste_email,
+          subscriber: subscriber,
+          cancelled: true
+        )
 
         mailer = instance_double(MainMailer, class: MainMailer)
-        message = stubbed_email_to(user.email_address)
+        message = stubbed_email_to(user.email)
 
         Feste::Processor.new(message, mailer, :send_mail, user).process
 
@@ -91,16 +112,20 @@ RSpec.describe Feste::Processor do
       it "sends the email" do
         user = User.new
 
-        subscriber = create_subscriber(email: user.email_address, cancelled: false)
+        subscriber = create_subscriber(email: user.email, cancelled: false)
         feste_email = create_email(mailer: MainMailer.name, action: "send_mail")
-        create_cancellation(email: feste_email, subscriber: subscriber, cancelled: false)
+        create_cancellation(
+          email: feste_email,
+          subscriber: subscriber,
+          cancelled: false
+        )
 
         mailer = instance_double(MainMailer, class: MainMailer)
-        message = stubbed_email_to(user.email_address)
+        message = stubbed_email_to(user.email)
 
         Feste::Processor.new(message, mailer, :send_mail, user).process
 
-        expect(message.to).to eq([user.email_address])    
+        expect(message.to).to eq([user.email])    
       end
     end
   end
@@ -115,7 +140,11 @@ RSpec.describe Feste::Processor do
   end
 
   def create_subscriber(email: ,cancelled: false)
-    subscriber = Feste::Subscriber.create(email: email, cancelled: cancelled)
+    subscriber = double(
+      Feste::Subscriber,
+      email: email,
+      cancelled: cancelled
+    )
     allow(Feste::Subscriber).to(
       receive(:find_or_create_by).with(email: email).and_return(subscriber)
     )
@@ -126,7 +155,11 @@ RSpec.describe Feste::Processor do
   end
 
   def create_email(mailer:,action:)
-    feste_email = Feste::Email.create(mailer: mailer, action: action)
+    feste_email = double(
+      Feste::Email,
+      mailer: mailer,
+      action: action
+    )
     allow(Feste::Email).to(
       receive(:find_or_create_by).
         with(mailer: mailer, action: action).
@@ -136,8 +169,12 @@ RSpec.describe Feste::Processor do
   end
 
   def create_cancellation(email:,subscriber:,cancelled:false,token:"token")
-    cancellation = Feste::CancelledSubscription.
-      create(email: email, subscriber: subscriber, cancelled: cancelled)
+    cancellation = double(
+      Feste::CancelledSubscription,
+      email: email,
+      subscriber: subscriber,
+      cancelled: cancelled
+    )
     allow(Feste::CancelledSubscription).to(
       receive(:find_or_create_by).
         with(subscriber: subscriber, email: email).
