@@ -1,5 +1,5 @@
 module Feste
-  module CancelledSubscriptionHelpers
+  module SubscriptionHelpers
     UNSUBSCRIBED = "Unsubscribed".freeze
     SUBSCRIBED = "Subscribed".freeze
 
@@ -31,7 +31,7 @@ module Feste
     private
 
     def completely_subscribed?(subscription)
-      subscription.subscriber.cancelled_subscriptions.cancelled.empty? && 
+      subscription.subscriber.subscriptions.cancelled.empty? && 
         !subscription.subscriber.cancelled
     end
   end

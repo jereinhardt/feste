@@ -3,13 +3,13 @@
 
 <div class="subscription-button-containers">
   <h3 class="unsubscribe-header">You are currently</h4>
-  <h1 class="subscription-status <%= subscription_status_class(@cancelled_subscription) %>"><%= subscription_status(@cancelled_subscription) %></h1>
+  <h1 class="subscription-status <%= subscription_status_class(@subscription) %>"><%= subscription_status(@subscription) %></h1>
   <h3 class="unsubscribe-subheader">
-    to <span class="email-scope color-red"><%= subscription_pluralization(@cancelled_subscription, "THIS", "ALL") %></span> <%= subscription_pluralization(@cancelled_subscription, "email", "emails") %>.
+    to <span class="email-scope color-red"><%= subscription_pluralization(@subscription, "THIS", "ALL") %></span> <%= subscription_pluralization(@subscription, "email", "emails") %>.
   </h3>
 
 
-  <% if @cancelled_subscription.subscriber.cancelled %>
+  <% if @subscription.subscriber.cancelled %>
     <!-- resub to all emails -->
     <div class="button-container">
       <button class="modal-open-button user-unsubscribe-button" data-js-modal-open="resub-user">
@@ -17,7 +17,7 @@
       </button>
     </div>
   <% else %>
-    <% if @cancelled_subscription.cancelled %>
+    <% if @subscription.cancelled %>
       <!-- resub to this email -->
       <div class="button-container">
         <button class="modal-open-button email-unsubscribe-button" data-js-modal-open="resub-email">Resubscribe me to this email</button>

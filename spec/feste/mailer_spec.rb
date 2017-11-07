@@ -17,13 +17,13 @@ RSpec.describe Feste::Mailer do
     it "creates a Feste::Processor instance and processes an email" do
       subscriber = double(Feste::Subscriber)
       email = double(Feste::Email)
-      subscription = double(Feste::CancelledSubscription, token: nil)
+      subscription = double(Feste::Subscription, token: nil)
 
       allow(Feste::Subscriber).
         to receive(:find_or_create_by).and_return(subscriber)
       allow(Feste::Email).
         to receive(:find_or_create_by).and_return(email)
-      allow(Feste::CancelledSubscription).
+      allow(Feste::Subscription).
         to receive(:find_or_create_by).and_return(subscription)
 
       user = User.new

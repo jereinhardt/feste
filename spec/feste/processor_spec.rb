@@ -170,12 +170,12 @@ RSpec.describe Feste::Processor do
 
   def create_cancellation(email:,subscriber:,cancelled:false,token:"token")
     cancellation = double(
-      Feste::CancelledSubscription,
+      Feste::Subscription,
       email: email,
       subscriber: subscriber,
       cancelled: cancelled
     )
-    allow(Feste::CancelledSubscription).to(
+    allow(Feste::Subscription).to(
       receive(:find_or_create_by).
         with(subscriber: subscriber, email: email).
         and_return(cancellation)

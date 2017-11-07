@@ -5,7 +5,7 @@ require "feste/engine" if defined?(Rails)
 require "feste/user"
 require "feste/processor"
 require "feste/template_helper" if defined?(Rails)
-require "feste/cancelled_subscription_helper" if defined?(Rails)
+require "feste/subscription_helper" if defined?(Rails)
 require "feste/mailer"
 
 module Feste

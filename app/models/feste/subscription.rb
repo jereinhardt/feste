@@ -1,5 +1,5 @@
 module Feste
-  class CancelledSubscription < ActiveRecord::Base
+  class Subscription < ActiveRecord::Base
     belongs_to :email
     belongs_to :subscriber
 

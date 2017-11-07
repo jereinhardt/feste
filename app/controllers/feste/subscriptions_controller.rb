@@ -1,23 +1,23 @@
 module Feste
-  class CancelledSubscriptionsController < ActionController::Base
+  class SubscriptionsController < ActionController::Base
     before_action :given_email_matches_user?, only: [:update]
     protect_from_forgery with: :exception
 
     layout "feste/application"
 
-    helper Feste::CancelledSubscriptionHelpers
+    helper Feste::SubscriptionHelpers
 
     def show
-      @cancelled_subscription = subscription
+      @subscription = subscription
     end
 
     def update
-      @cancelled_subscription = subscription
+      @subscription = subscription
       if update_requested_changes
-         @cancelled_subscription.update(cancellation_params) && 
-         @cancelled_subscription.subscriber.update(user_params)
+         @subscription.update(cancellation_params) && 
+         @subscription.subscriber.update(user_params)
         
-        redirect_to cancelled_subscription_path(subscription.token)
+        redirect_to subscription_path(subscription.token)
       else
         flash[:notice] = "Something went wrong!  Please try again later."
 
@@ -31,20 +31,20 @@ module Feste
       if user_params[:email].present?
         if subscription.subscriber.email != user_params[:email]
           flash[:notice] = "You do not have permission to unsubscribe from this email."
-          redirect_to cancelled_subscription_path(subscription.token)
+          redirect_to subscription_path(subscription.token)
         end
       else
         flash[:notice] = "Please provide an email address."
-        redirect_to cancelled_subscription_path(subscription.token)
+        redirect_to subscription_path(subscription.token)
       end
     end
 
     def subscription
-      Feste::CancelledSubscription.find_by(token: params[:token])
+      Feste::Subscription.find_by(token: params[:token])
     end
 
     def subscription_params
-      params.require(:cancelled_subscription).permit(
+      params.require(:subscription).permit(
         :cancelled,
         subscriber: [:cancelled, :email]
       )
@@ -59,19 +59,19 @@ module Feste
     end
 
     def update_requested_changes
-      @cancelled_subscription.assign_attributes(cancellation_params)
-      if @cancelled_subscription.cancelled_changed? && @cancelled_subscription.cancelled
+      @subscription.assign_attributes(cancellation_params)
+      if @subscription.cancelled_changed? && @subscription.cancelled
         flash[:success] = "You have successfully unsubscribed from this email notification."
-      elsif @cancelled_subscription.cancelled_changed?
+      elsif @subscription.cancelled_changed?
         flash[:success] = "You have successfully subscribed to this email notification."
       end
-      @cancelled_subscription.subscriber.assign_attributes(user_params)
-      if @cancelled_subscription.subscriber.cancelled_changed?
+      @subscription.subscriber.assign_attributes(user_params)
+      if @subscription.subscriber.cancelled_changed?
         flash[:success] ||= "You have successfully unsubscribed from all email notifications."
       else
         flash[:success] ||= "You have successfully subscribed to all email notifications."
       end
-      @cancelled_subscription.subscriber.save && @cancelled_subscription.save
+      @subscription.subscriber.save && @subscription.save
     end
   end
 end

@@ -39,7 +39,7 @@ module Feste
       def generate_subscription_token!(mailer, action)
         user = @_feste_user
         @_subscription_token ||= 
-          Feste::CancelledSubscription.get_token_for(user, mailer, action)
+          Feste::Subscription.get_token_for(user, mailer, action)
       end
     end
 
