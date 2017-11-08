@@ -4,14 +4,14 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'feste/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "feste"
+  spec.name          = "Feste"
   spec.version       = Feste::VERSION
   spec.authors       = ["Josh Reinhardt"]
   spec.email         = ["joshua.e.reinhardt@gmail.com"]
 
-  spec.summary       = %q{Allow users to unsubscribe to your mailers; one-by-one or wholesale}
-  spec.description   = %q{Allow users to unsubscribe to your mailers; one-by-one or wholesale}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Allow your users to manage their email subscriptions.}
+  spec.description   = %q{Give users of your application the ability to manage their email subscriptions.}
+  spec.homepage      = "https://github.com/jereinhardt/feste"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
@@ -30,5 +30,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "actionmailer"
-  spec.add_development_dependency "byebug"
 end
