@@ -1,9 +1,7 @@
 module Feste
-  module TemplateHelper
-    include Feste::Engine.routes.url_helpers
-    
+  module TemplateHelper    
     def subscription_url
-      cancelled_subscription_url(
+      Feste::Engine.routes.url_helpers.subscription_url(
         token: @_subscription_token,
         host: Feste.options[:host]
       )
