@@ -55,7 +55,7 @@ module Feste
     end
 
     def user_params
-      subscription_params[:subscriber].compact
+      subscription_params[:subscriber]
     end
 
     def update_requested_changes
