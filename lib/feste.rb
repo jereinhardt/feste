@@ -17,7 +17,6 @@ module Feste
 
   self.options = {
     email_source: :email,
-    host: "localhost:3000",
   }
 
   def self.configure

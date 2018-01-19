@@ -23,7 +23,7 @@ mount Feste::Engine => "/email-subscriptions"
 
 ## Configuration
 
-There are a two major configurate options Feste makes available.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`.  Feste needs to know the host of your application.  Most likely, you will store this in your ENV.  By default, it is set to `localhost:3000`.
+There are a two major configurate options Feste makes available.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`, which is set to your `ActionMailer::Base.default_url_options[:host]` value by default.
 
 ```ruby
 # initializers/feste.rb
