@@ -1,8 +1,8 @@
-require "rails"
-require "bundler/setup"
+ENV["RAILS_ENV"] ||= "test"
+
+require "byebug"
 require "feste"
 require "action_mailer"
-require "byebug"
 
 RAILS_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
 
@@ -27,4 +27,7 @@ RSpec.configure do |config|
       to(receive(:mail)).
       and_return(mail_message)
   end
+
+  config.mock_with :rspec
+  config.order = "random"
 end

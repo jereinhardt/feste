@@ -22,12 +22,16 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "rake"
-  spec.add_dependency "activerecord"
-
-  spec.add_runtime_dependency "rails"
+  spec.add_dependency "rails"
 
   spec.add_development_dependency "bundler", "~> 1.14"
+  spec.add_development_dependency "byebug"
+  spec.add_development_dependency "capybara"
+  spec.add_development_dependency "factory_bot"
+  spec.add_development_dependency "factory_bot_rails"
+  spec.add_development_dependency "pg", "~> 0.18"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "actionmailer"
 end
