@@ -4,7 +4,7 @@ RSpec.describe Feste::Processor do
   describe "#process" do
     context "when there is a whitelist set", :stubbed_email do
       it "processes an action in the whitelist" do
-        user = User.new
+        user = TestUser.new
         mailer = instance_double(
           MailerWithWhitelist,
           class: MailerWithWhitelist
@@ -20,7 +20,7 @@ RSpec.describe Feste::Processor do
       end
 
       it "does not process an action that is not on the whitelist" do
-        user = User.new
+        user = TestUser.new
         mailer = instance_double(
           MailerWithWhitelist,
           class: MailerWithWhitelist
@@ -39,7 +39,7 @@ RSpec.describe Feste::Processor do
 
     context "when there is a blacklist set", :stubbed_email do
       it "proceses an action not on the blacklist" do
-        user = User.new
+        user = TestUser.new
         mailer = instance_double(
           MailerWithBlacklist,
           class: MailerWithBlacklist
@@ -55,7 +55,7 @@ RSpec.describe Feste::Processor do
       end
 
       it "does not process an action on the blacklist" do
-        user = User.new
+        user = TestUser.new
         mailer = instance_double(
           MailerWithBlacklist,
           class: MailerWithBlacklist
@@ -75,7 +75,7 @@ RSpec.describe Feste::Processor do
 
     context "when a user has unsubscribed to all emails" do
       it "deletes all message destinations" do
-        user = User.new
+        user = TestUser.new
 
         subscriber = create_subscriber(email: user.email, cancelled: true)
         mailer = instance_double(MainMailer, class: MainMailer)
@@ -89,7 +89,7 @@ RSpec.describe Feste::Processor do
 
     context "when a user has unsubscribed to an email" do
       it "deletes all message destinations" do
-        user = User.new
+        user = TestUser.new
 
         subscriber = create_subscriber(email: user.email, cancelled: false)
         feste_email = create_email(mailer: MainMailer.name, action: "send_mail")
@@ -110,7 +110,7 @@ RSpec.describe Feste::Processor do
 
     context "when a user has not unsubscribed to an email" do
       it "sends the email" do
-        user = User.new
+        user = TestUser.new
 
         subscriber = create_subscriber(email: user.email, cancelled: false)
         feste_email = create_email(mailer: MainMailer.name, action: "send_mail")
