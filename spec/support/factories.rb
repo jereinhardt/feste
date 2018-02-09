@@ -9,6 +9,7 @@ FactoryBot.define do
   factory :subscriber, class: Feste::Subscriber do
     email "user@email.com"
     sequence(:token) { |n| "token-#{n}" }
+    cancelled false
   end
 
   factory :email, class: Feste::Email do

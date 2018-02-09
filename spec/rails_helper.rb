@@ -18,6 +18,9 @@ RSpec.configure do |config|
   config.infer_base_class_for_anonymous_controllers = false
   config.include Rails.application.routes.url_helpers
   config.include Feste::Engine.routes.url_helpers
+  config.before(:each, type: :mailer) do
+    ActionMailer::Base.default_url_options[:host] = "localhost:3000"
+  end
 end
 
 require "spec_helper"
