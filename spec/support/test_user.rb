@@ -1,4 +1,4 @@
-class User
+class TestUser
   include Feste::User
 
   def initialize(email = "test@test.com")

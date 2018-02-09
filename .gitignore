@@ -13,3 +13,20 @@
 # rspec failure tracking
 .rspec_status
 
+# dummy app
+/spec/dummy/.bundle
+/spec/dummy/.byebug_history
+/spec/dummy/.env
+/spec/dummy/.yardoc
+/spec/dummy/!.keep
+/spec/dummy/coverage/
+/spec/dummy/doc/
+/spec/dummy/pkg/
+/spec/dummy/spec/reports/
+/spec/dummy/tags
+/spec/dummy/tmp/*
+/spec/dummy/*.DS_STORE
+/spec/dummy/log/*
+/spec/dummy/public/system
+/spec/dummy/public/assets
+/spec/dummy/public/uploads

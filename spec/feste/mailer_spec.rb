@@ -26,7 +26,7 @@ RSpec.describe Feste::Mailer do
       allow(Feste::Subscription).
         to receive(:find_or_create_by).and_return(subscription)
 
-      user = User.new
+      user = TestUser.new
       message = MailerWithWhitelist.whitelist_action(user)
       processor = instance_double(Feste::Processor, process: nil)
       allow(Feste::Processor).to receive(:new).and_return(processor)
