@@ -12,11 +12,11 @@ RSpec.describe Feste::Subscription, type: :model do
         subscription = create(
           :subscription,
           subscriber: user,
-          category: "Marketing Email"
+          category: "Marketing Emails"
         )
 
         token = Feste::Subscription.get_token_for(
-          user.email,
+          user,
           ReminderMailer,
           :send_reminder
         )
@@ -30,14 +30,14 @@ RSpec.describe Feste::Subscription, type: :model do
         user = create(:user)
 
         token = Feste::Subscription.get_token_for(
-          user.email,
+          user,
           ReminderMailer,
           :send_reminder
         )
 
         subscription = Feste::Subscription.find_by(
           subscriber: user,
-          category: "Marketing Email"
+          category: "Marketing Emails"
         )
 
         expect(subscription.token).to eq(token)

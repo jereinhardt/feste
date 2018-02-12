@@ -4,21 +4,22 @@ module Feste
 
     before_create :generate_token
 
-    def self.get_token_for(email, mailer, action)
-      subscriber = find_subscribed_user(email)
-      category = mailer.action_categories[action.to_sym] || 
-        mailer.action_categories[:all]
-      subscription = Feste::Subscription.find_or_create_by(
-        subscriber: subscriber,
-        category: category
-      )
-      subscription.token
+    def self.get_token_for(subscriber, mailer, action)
+      transaction do
+        category = mailer.action_categories[action.to_sym] || 
+          mailer.action_categories[:all]
+        subscription = Feste::Subscription.find_or_create_by(
+          subscriber: subscriber,
+          category: category
+        )
+        subscription.token
+      end
     end
 
     def self.find_subscribed_user(email)
       user_models.find do |model|
         model.find_by(Feste.options[:email_source] => email)
-      end.find_by(Feste.options[:email_source] => email)
+      end&.find_by(Feste.options[:email_source] => email)
     end
 
     private

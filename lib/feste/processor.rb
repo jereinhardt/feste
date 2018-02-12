@@ -9,21 +9,20 @@ module Feste
     attr_reader :message, :mailer, :action
 
     def process
-      category_name = mailer.action_categories.keys == [:all] || 
+      category = mailer.action_categories[:all] || 
         mailer.action_categories[action.to_sym]
-      if category_name.present?
+      if category.present?
         email = message.to.first
-        stop_delivery_to_unsubscribed_user!(email, category_name)
+        stop_delivery_to_unsubscribed_user!(email, category)
       end
     end
 
     private
 
-    def stop_delivery_to_unsubscribed_user!(email, category_name)
+    def stop_delivery_to_unsubscribed_user!(email, category)
       subscriber = Feste::Subscription.find_subscribed_user(email)
       subscription = Feste::Subscription.find_by(
-        email: email,
-        category_name: category_name,
+        category: category,
         subscriber: subscriber
       )
 

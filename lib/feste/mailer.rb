@@ -14,24 +14,32 @@ module Feste
       def mail(headers = {}, &block)
         return message if @_mail_was_called && headers.blank? && !block
 
+        email = headers[:to].is_a?(String) ? headers[:to] : headers[:to].first
+        subscriber = Feste::Subscription.find_subscribed_user(email)
+        generate_subscription_token!(subscriber)
+
         message = super
 
-        generate_subscription_token!(message)
-        Feste::Processor.new(message, self, action_name).process
+        if process_email_subscription?(subscriber)
+          Feste::Processor.new(message, self, action_name).process
+        end
         message
       end
 
       private
 
-      def generate_subscription_token!(message)
-        byebug
-        if (
-          self.action_categories[action_name.to_sym] || 
-          self.action_categories[:all]
-        )
+      def generate_subscription_token!(subscriber)
+        if process_email_subscription?(subscriber)
           @_subscription_token ||= Feste::Subscription.
-            get_token_for(message.to.first, self, action_name)
+            get_token_for(subscriber, self, action_name)
         end
+      end
+
+      def process_email_subscription?(subscriber)
+        subscriber.present? && (
+          self.action_categories[action_name.to_sym] ||
+            self.action_categories[:all]
+        )
       end
     end
 
