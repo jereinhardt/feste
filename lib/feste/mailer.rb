@@ -5,51 +5,47 @@ module Feste
       klass.extend ClassMethods
       klass.send(:add_template_helper, TemplateHelper) if defined?(Rails)
       klass.class_eval do
-        class_attribute :feste_whitelist
-        class_attribute :feste_blacklist
-        self.feste_whitelist = []
-        self.feste_blacklist = []
-        attr_accessor :subscribable_mailer_name
+        class_attribute :action_categories
+        self.action_categories = {}
       end
     end
 
     module InstanceMethods
       def mail(headers = {}, &block)
         return message if @_mail_was_called && headers.blank? && !block
-        
-        mailer = self.class.name
-        action = caller_locations.find do |l| 
-          self.class.instance_methods(false).include?(l.label.to_sym)
-        end.label
-
-        generate_subscription_token!(mailer, action)
 
         message = super
 
-        Feste::Processor.new(message, self, action, @_feste_user).process
+        generate_subscription_token!(message)
+        Feste::Processor.new(message, self, action_name).process
         message
-      end
-
-      def subscriber(user)
-        @_feste_user = user
       end
 
       private
 
-      def generate_subscription_token!(mailer, action)
-        user = @_feste_user
-        @_subscription_token ||= 
-          Feste::Subscription.get_token_for(user, mailer, action)
+      def generate_subscription_token!(message)
+        byebug
+        if (
+          self.action_categories[action_name.to_sym] || 
+          self.action_categories[:all]
+        )
+          @_subscription_token ||= Feste::Subscription.
+            get_token_for(message.to.first, self, action_name)
+        end
       end
     end
 
     module ClassMethods
-      def allow_subscriptions(only: [], except: [])
-        if only.any?
-          self.feste_whitelist = only
-        elsif except.any?
-          self.feste_blacklist = except
-        end
+      def categorize(meths = [], as:)
+        actions = meths.empty? ? [:all] : meths
+        actions.each { |action| self.action_categories[action.to_sym] = as }
+      end
+
+      def action_methods
+        feste_methods = %w[
+          action_categories action_categories= action_categories?
+        ]
+        Set.new(super - feste_methods)
       end
     end
   end

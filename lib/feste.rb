@@ -16,7 +16,8 @@ module Feste
   end
 
   self.options = {
-    email_source: :email,
+    host: nil,
+    email_source: :email
   }
 
   def self.configure

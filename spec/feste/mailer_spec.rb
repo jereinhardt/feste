@@ -1,33 +1,44 @@
 require "spec_helper"
 
 RSpec.describe Feste::Mailer do
-  describe "::ClassMethods.allow_subscriptions" do
-    it "adds mailer actions to the whitelist" do
-      expect(MailerWithWhitelist.feste_whitelist).to eq([:whitelist_action])
-      expect(MailerWithWhitelist.feste_whitelist).not_to include(:other_action)
+  describe ".categorize" do
+    it "adds all mailer actions to a category" do
+      expect(MainMailer.action_categories[:all]).
+        to eq("Marketing Emails")
     end
 
-    it "adds mailer actions to the blacklist" do
-      expect(MailerWithBlacklist.feste_blacklist).to eq([:blacklist_action])
-      expect(MailerWithBlacklist.feste_blacklist).not_to include(:whitelist_action)
+    it "adds selected mailer actions to a category" do
+      class TestMailer < ActionMailer::Base
+        include Feste::Mailer
+
+        categorize [:test_action], as: "Marketing Emails"
+
+        def test_action(user)
+          mail(to: user.email, from: "support@test.com")
+        end
+
+        def ignore_action(user)
+          mail(to: user.email, from: "support@test.com")
+        end
+      end
+
+      expect(TestMailer.action_categories[:test_action]).
+        to eq("Marketing Emails")
+      expect(TestMailer.action_categories[:ignore_action]).to be nil
     end
   end
 
-  describe "::InstanceMethods.mail", :stubbed_email do
+  describe "#mail", :stubbed_email do
     it "creates a Feste::Processor instance and processes an email" do
-      subscriber = double(Feste::Subscriber)
-      email = double(Feste::Email)
+      allow(ActiveRecord::Base).to receive(:descendants).and_return([TestUser])
       subscription = double(Feste::Subscription, token: nil)
 
-      allow(Feste::Subscriber).
-        to receive(:find_or_create_by).and_return(subscriber)
-      allow(Feste::Email).
-        to receive(:find_or_create_by).and_return(email)
       allow(Feste::Subscription).
         to receive(:find_or_create_by).and_return(subscription)
 
       user = TestUser.new
-      message = MailerWithWhitelist.whitelist_action(user)
+      allow(TestUser).to receive(:find_by).and_return(user)
+      message = MainMailer.send_mail(user)
       processor = instance_double(Feste::Processor, process: nil)
       allow(Feste::Processor).to receive(:new).and_return(processor)
 

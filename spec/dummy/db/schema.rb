@@ -10,29 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180209191151) do
+ActiveRecord::Schema.define(version: 20180212013132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "feste_emails", force: :cascade do |t|
-    t.string "mailer", null: false
-    t.string "action", null: false
-  end
-
-  create_table "feste_subscribers", force: :cascade do |t|
-    t.string "email", null: false
-    t.string "token", null: false
-    t.boolean "cancelled", default: false, null: false
-  end
-
   create_table "feste_subscriptions", force: :cascade do |t|
     t.integer "subscriber_id", null: false
-    t.integer "email_id", null: false
-    t.boolean "cancelled", default: false, null: false
+    t.string "subscriber_type", null: false
+    t.string "category", null: false
+    t.boolean "canceled", default: false, null: false
     t.string "token", null: false
-    t.index ["email_id"], name: "index_feste_subscriptions_on_email_id"
-    t.index ["subscriber_id"], name: "index_feste_subscriptions_on_subscriber_id"
   end
 
   create_table "users", force: :cascade do |t|

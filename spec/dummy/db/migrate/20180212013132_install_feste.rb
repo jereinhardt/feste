@@ -1,4 +1,4 @@
-class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version %>
+class InstallFeste < ActiveRecord::Migration[5.1]
   def change
     create_table :feste_subscriptions do |t|
       t.integer :subscriber_id, null: false

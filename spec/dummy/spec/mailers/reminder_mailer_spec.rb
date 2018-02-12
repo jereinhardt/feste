@@ -5,18 +5,7 @@ RSpec.describe ReminderMailer, type: :mailer do
     context "when the user is unsubscribed" do
       it "does not send the email" do
         user = create(:user)
-        email = create(
-          :email,
-          mailer: "ReminderMailer",
-          action: "send_reminder"
-        )
-        subscriber = create(:subscriber, email: user.email)
-        create(
-          :subscription,
-          cancelled: true,
-          email: email,
-          subscriber: subscriber
-        )
+        create(:subscription, canceled: true, subscriber: user)
 
         email = ReminderMailer.send_reminder(user)
 
@@ -27,17 +16,7 @@ RSpec.describe ReminderMailer, type: :mailer do
     context "when the user is subscribed" do
       it "has a link to the subscription path" do
         user = create(:user)
-        email = create(
-          :email,
-          mailer: "ReminderMailer",
-          action: "send_reminder"
-        )
-        subscriber = create(:subscriber, email: user.email)
-        subscription = create(
-          :subscription,
-          email: email,
-          subscriber: subscriber
-        )       
+        subscription = create(:subscription, canceled: false, subscriber: user)       
 
         email = ReminderMailer.send_reminder(user)   
         email_body = Capybara.string(email.body.to_s)

@@ -1,36 +1,33 @@
 module Feste
   class Processor
-    def initialize(message, mailer, action, user)
+    def initialize(message, mailer, action)
       @message = message
       @mailer = mailer
       @action = action
-      @user = user
     end
 
-    attr_reader :message, :mailer, :action, :user
+    attr_reader :message, :mailer, :action
 
     def process
-      if mailer.class.feste_whitelist.any?
-        return true unless mailer.class.feste_whitelist.include?(action)
-      elsif mailer.class.feste_blacklist.any?
-        return true if mailer.class.feste_blacklist.include?(action)
+      category_name = mailer.action_categories.keys == [:all] || 
+        mailer.action_categories[action.to_sym]
+      if category_name.present?
+        email = message.to.first
+        stop_delivery_to_unsubscribed_user!(email, category_name)
       end
-      stop_delivery_to_unsubscribed_user!
     end
 
     private
 
-    def stop_delivery_to_unsubscribed_user!
-      subscriber = Feste::Subscriber.find_or_create_by(email: user.email_source)
-      if subscriber.cancelled
-        message.to = []
-        return true
-      end
-      email = Feste::Email.
-        find_or_create_by(mailer: mailer.class.name, action: action.to_s)
-      cancellation = Feste::Subscription.
-        find_or_create_by(subscriber: subscriber, email: email)
-      message.to = [] if cancellation.cancelled
+    def stop_delivery_to_unsubscribed_user!(email, category_name)
+      subscriber = Feste::Subscription.find_subscribed_user(email)
+      subscription = Feste::Subscription.find_by(
+        email: email,
+        category_name: category_name,
+        subscriber: subscriber
+      )
+
+      message.to = [] if subscription.canceled?
     end
   end
 end
