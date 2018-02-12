@@ -33,22 +33,20 @@ RSpec.describe Feste::Mailer do
       it "creates a Feste::Processor instance and processes an email" do
         allow(ActiveRecord::Base).
           to receive(:descendants).and_return([TestUser])
-        subscription = double(Feste::Subscription, token: nil)
-
+        subscription = double(Feste::Subscription, token: "token")
         allow(Feste::Subscription).
-          to receive(:find_or_create_by).and_return(subscription)
+          to receive(:get_token_for).and_return(subscription.token)
 
         user = TestUser.new
-        allow(TestUser).to receive(:find_by).and_return(user)
+        allow(Feste::Subscription).
+          to receive(:find_subscribed_user).and_return(user)
 
         message = MainMailer.send_mail(user)
-        processor = instance_double(Feste::Processor, process: nil)
-        allow(Feste::Processor).to receive(:new).and_return(processor)
+        allow(Feste::Processor).to receive_message_chain(:new, :process)
 
         message.deliver_now
 
         expect(Feste::Processor).to have_received(:new)
-        expect(processor).to have_received(:process)
       end
     end
 
@@ -56,7 +54,7 @@ RSpec.describe Feste::Mailer do
       it "does not process the email" do
         allow(ActiveRecord::Base).
           to receive(:descendants).and_return([TestUser])
-        subscription = double(Feste::Subscription, token: nil)
+        subscription = double(Feste::Subscription, token: "token")
 
         user = TestUser.new
         allow(Feste::Subscription).
