@@ -1,6 +1,10 @@
 class TestUser
   private
 
+  def self.find_by(**_)
+    nil
+  end
+
   def self.has_many(_, **options)
   end
 
