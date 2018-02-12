@@ -1,0 +1,40 @@
+.error-label {
+  color: #aa1111;
+  font-weight: 600;
+}
+
+.form-submit-button {
+  border: 0;
+  padding: 15px;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: white;
+  background: #aa1111;
+  border-radius: 30px;
+}
+
+.email-field-container {
+  margin-bottom: 1.2em;
+}
+
+.email-field-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 5px;
+  font-size: 1.5em;
+  text-align: center;
+  font-weight: 300;
+}
+
+.email-field-container {
+  margin-bottom: 1.2em;
+}
+
+.email-field-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 5px;
+  font-size: 1.5em;
+  text-align: center;
+  font-weight: 300;
+}

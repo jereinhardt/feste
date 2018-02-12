@@ -51,6 +51,3 @@ RSpec.feature "user manages email subscriptions", js: true do
     end
   end
 end
-
-# user = User.create(first_name: "jos", last_name: "re", email: "t@t.com")
-# Feste::Subscription.create(subscriber: user, category: "Marketing Emails")
