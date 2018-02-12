@@ -5,6 +5,7 @@ require "factory_bot_rails"
 require File.expand_path("../dummy/config/environment.rb", __FILE__)
 
 require "rspec/rails"
+require "shoulda/matchers"
 
 ActiveRecord::Migration.maintain_test_schema!
 ActiveRecord::Schema.verbose = false
@@ -20,6 +21,14 @@ RSpec.configure do |config|
   config.include Feste::Engine.routes.url_helpers
   config.before(:each, type: :mailer) do
     ActionMailer::Base.default_url_options[:host] = "localhost:3000"
+  end
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :active_record
+    with.library :active_model
   end
 end
 

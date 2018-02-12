@@ -1,40 +1,85 @@
 require "spec_helper"
 
 RSpec.describe Feste::Mailer do
-  describe "::ClassMethods.allow_subscriptions" do
-    it "adds mailer actions to the whitelist" do
-      expect(MailerWithWhitelist.feste_whitelist).to eq([:whitelist_action])
-      expect(MailerWithWhitelist.feste_whitelist).not_to include(:other_action)
+  describe ".categorize" do
+    it "adds all mailer actions to a category" do
+      expect(MainMailer.action_categories[:send_mail]).
+        to eq("Marketing Emails")
     end
 
-    it "adds mailer actions to the blacklist" do
-      expect(MailerWithBlacklist.feste_blacklist).to eq([:blacklist_action])
-      expect(MailerWithBlacklist.feste_blacklist).not_to include(:whitelist_action)
+    it "adds selected mailer actions to a category" do
+      class TestMailer < ActionMailer::Base
+        include Feste::Mailer
+
+        categorize [:test_action], as: "Marketing Emails"
+
+        def test_action(user)
+          mail(to: user.email, from: "support@test.com")
+        end
+
+        def ignore_action(user)
+          mail(to: user.email, from: "support@test.com")
+        end
+      end
+
+      expect(TestMailer.action_categories[:test_action]).
+        to eq("Marketing Emails")
+      expect(TestMailer.action_categories[:ignore_action]).to be nil
     end
   end
 
-  describe "::InstanceMethods.mail", :stubbed_email do
-    it "creates a Feste::Processor instance and processes an email" do
-      subscriber = double(Feste::Subscriber)
-      email = double(Feste::Email)
-      subscription = double(Feste::Subscription, token: nil)
+  describe "#mail", :stubbed_email do
+    context "when the mailer action has been categorized" do
+      it "creates a Feste::Processor instance and processes an email" do
+        allow(ActiveRecord::Base).
+          to receive(:descendants).and_return([TestUser])
+        subscription = double(Feste::Subscription, token: "token")
+        allow(Feste::Subscription).
+          to receive(:get_token_for).and_return(subscription.token)
 
-      allow(Feste::Subscriber).
-        to receive(:find_or_create_by).and_return(subscriber)
-      allow(Feste::Email).
-        to receive(:find_or_create_by).and_return(email)
-      allow(Feste::Subscription).
-        to receive(:find_or_create_by).and_return(subscription)
+        user = TestUser.new
+        allow(Feste::Subscription).
+          to receive(:find_subscribed_user).and_return(user)
 
-      user = TestUser.new
-      message = MailerWithWhitelist.whitelist_action(user)
-      processor = instance_double(Feste::Processor, process: nil)
-      allow(Feste::Processor).to receive(:new).and_return(processor)
+        message = MainMailer.send_mail(user)
+        allow(Feste::Processor).to receive_message_chain(:new, :process)
 
-      message.deliver_now
+        message.deliver_now
 
-      expect(Feste::Processor).to have_received(:new)
-      expect(processor).to have_received(:process)
+        expect(Feste::Processor).to have_received(:new)
+      end
+    end
+
+    context "when the mailer action has not been categorized" do
+      it "does not process the email" do
+        allow(ActiveRecord::Base).
+          to receive(:descendants).and_return([TestUser])
+        subscription = double(Feste::Subscription, token: "token")
+
+        user = TestUser.new
+        allow(Feste::Subscription).
+          to receive(:find_subscribed_user).and_return(user)
+        message = MainMailer.send_less_mail(user)
+        allow(Feste::Processor).to receive(:new)
+
+        message.deliver_now
+
+        expect(Feste::Processor).not_to have_received(:new)
+      end
+    end
+
+    context "when there is no record with the given email address" do
+      it "does not process the email" do
+        allow(ActiveRecord::Base).
+          to receive(:descendants).and_return([TestUser])
+        allow(TestUser).to receive(:find_by).and_return(nil)
+        message = MainMailer.send_less_mail(TestUser.new)
+        allow(Feste::Processor).to receive(:new)
+
+        message.deliver_now
+
+        expect(Feste::Processor).not_to have_received(:new)
+      end
     end
   end
 end

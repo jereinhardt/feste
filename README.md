@@ -45,52 +45,41 @@ class User < ApplicationRecord
 end
 ```
 
+This will give your user model a `has_many` relationship to `subscriptions`.  Since this relationship is polymorphic, your can include the `Feste::User` module in multiple models.
+
 ### Mailer
 
-In your mailer, include the `Feste::Mailer` module.  In your mailer actions, you need to register an instance of the model that includes Feste's user module.  You can do this using the `subscriber` method.
+In your mailer, include the `Feste::Mailer` module.
+
+Feste keeps track of email subscriptions by grouping mailer actions into categories that you define.  Your users will no be able to subscribe or unsubscibe to emails until you assign specific actions to a category.  In order to do this, you can call the `categorize` method within your mailer.  Doing so will automatically assign all actions in that mailer to the category you provide through the `as` option.
 
 ```ruby
-class GreetingMailer < ApplicationMailer
+class CouponMailer < ApplicationMailer
   include Feste::Mailer
 
-  def signup_email(user)
-    subscriber(user)
+  categorize as: "Marketing Emails"
+
+  def send_coupon(user)
     mail(to: user.email, from: "support@here.com")
   end
 end
 ```
 
-When you include the `Feste::Mailer` module in a mailer, by default, Feste will attempt to process every outgoing action belonging to that mailer.  You can specify which actions you want Feste to process using the `allow_subscriptions` method.  This method takes one of two options: `only` which will stop Feste from processing any actions other than those given, and `except`, which will stop Feste from processing the actions given.
+If you only want to categorize specific actions in a mailer to a category, you can do so by listing those actions in an array as your first arguement.
 
 ```ruby
-class NewMessageMailer < ApplicationMailer
+class CouponMailer < ApplicationMailer
   include Feste::Mailer
 
-  allow_subscriptions only: [:new_message]
+  categorize [:send_coupon], as: "Marketing Emails"
+  categorize [:send_coupon_reminder], as: "Reminder Emails"
 
-  def new_message(message)
-    subscriber(message.recipient)
-    mail(to: message.recipient.email, from: message.author.email)
+  def send_coupon(user)
+    mail(to: user.email, from: "support@here.com")
   end
 
-  def new_notification(notification)
-    mail(to: notification.recipient.email, from: "us@support.com")
-  end
-end
-```
-```ruby
-class NewMessageMailer < ApplicationMailer
-  include Feste::Mailer
-
-  allow_subscriptions except: [:new_notification]
-
-  def new_message(message)
-    subscriber(message.recipient)
-    mail(to: message.recipient.email, from: message.author.email)
-  end
-
-  def new_notification(notification)
-    mail(to: notification.recipient.email, from: "us@support.com")
+  def send_coupon_reminder(user)
+    mail(to: user.email, from: "support@here.com")
   end
 end
 ```

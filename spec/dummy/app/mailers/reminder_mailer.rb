@@ -1,8 +1,9 @@
 class ReminderMailer < ApplicationMailer
   include Feste::Mailer
 
+  categorize as: "Marketing Emails"
+
   def send_reminder(user)
-    subscriber(user)
     mail(to: user.email, from: "support@app.com")
   end
 end

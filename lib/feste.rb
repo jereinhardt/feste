@@ -4,8 +4,8 @@ require "feste/version"
 require "feste/engine" if defined?(Rails)
 require "feste/user"
 require "feste/processor"
-require "feste/template_helper" if defined?(Rails)
-require "feste/subscription_helper" if defined?(Rails)
+require "feste/template_helper"
+require "feste/subscription_helper"
 require "feste/mailer"
 
 module Feste
@@ -16,7 +16,8 @@ module Feste
   end
 
   self.options = {
-    email_source: :email,
+    host: nil,
+    email_source: :email
   }
 
   def self.configure
