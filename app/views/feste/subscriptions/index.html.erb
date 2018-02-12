@@ -1,0 +1,101 @@
+
+<%= form_for @subscriber, url: subscriptions_path(token: params[:token]), method: :put, html: { id: "edit-subscriptions-form" } do |f| %>
+  <%= f.hidden_field Feste.options[:email_source], id: "subscriber-email" %>
+  <%= f.fields_for @subscriber.subscriptions do |subscription_form| %>
+    <% @subscriber.subscriptions.order(category: :asc).each do |subscription| %>
+      <%= label_tag do %>
+        <%= subscription.category %>
+        <%= subscription_form.check_box(nil, {id: "subscription-#{subscription.category.parameterize}", checked: !subscription.canceled?}, subscription.id, nil) %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= f.submit "Submit" %>
+<% end %>
+
+<div class="confimation-modal-container hidden" id="confirmation-modal">
+  <div class="modal-overlay" data-js-modal-close="true">
+    <div class="modal-content">
+      <h4 class="modal-header">Please Confirm Your Email</h4>
+      <p class="modal-body">To continue, please verify your email address.</p>
+      <form action="#" class="cancel-subscription-form" id="cancel-subscription-form">
+        <div class="email-field-container" data-js-required="true">
+          <label class="error-label hidden" data-js-error="true">Please enter a valid email address</label>
+          <input type="text" name="email-confirmation-input" id="email-confirmation-input" class="email-field-input">
+        </div>
+        <button class="form-submit-button" id="cofirm-submit-button">Confirm</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var $form = document.getElementById("edit-subscriptions-form");
+  var $modal = document.getElementById("confirmation-modal");
+
+  $form.addEventListener("submit", handleMainFormSubmission);
+
+  function handleMainFormSubmission(event) {
+    event.preventDefault();
+    openModal($modal);
+  }
+
+  function openModal($modalContainer) {
+    $modalContainer.classList.remove("hidden");
+    bindModalEvents($modalContainer);
+  }
+
+  function closeModal($modalContainer) {
+    $modalContainer.className += " hidden";
+    unbindModalEvents($modalContainer);
+  }
+
+  function bindModalEvents($modalContainer) {
+    var $closeButtons = $modalContainer.querySelectorAll("[data-js-modal-close]");
+    for (var i = 0; i < $closeButtons.length; i ++) {
+      var $button = $closeButtons[i];
+      $button.addEventListener("click", function(event) {
+        if ( event.target == event.currentTarget ) {
+          event.preventDefault();
+          closeModal($modalContainer);  
+        }        
+      });
+    }
+
+    var $confirmForm = document.getElementById("cancel-subscription-form");
+    $confirmForm.addEventListener("submit", handleConfirmFormSubmission);
+  }
+
+  function unbindModalEvents($modalContainer) {
+    var $closeButtons = $modalContainer.querySelectorAll("[data-js-modal-close]");
+    for (var i = 0; i < $closeButtons.length; i ++) {
+      var $button = $closeButtons[i];
+      $button.removeEventListener("click", function(event) {
+        if ( event.target == event.currentTarget ) {
+          event.preventDefault();
+          closeModal($modalContainer);  
+        }        
+      });
+    }
+
+    var $confirmForm = document.getElementById("cancel-subscription-form");
+    $confirmForm.removeEventListener("submit", handleConfirmFormSubmission);
+  }
+
+  function handleConfirmFormSubmission(event) {
+    event.preventDefault();
+    var $form = event.target;
+    var $input = document.getElementById("email-confirmation-input");
+    var $required = $form.querySelectorAll("[data-js-required]")[0];
+    var $errorMessage = $required.querySelectorAll("[data-js-error]")[0];
+    var val = $required.querySelectorAll("input")[0].value;
+    var email = document.getElementById("subscriber-email").value
+    $errorMessage.className += " hidden";
+    if (!val || val != email) {
+      $errorMessage.classList.remove("hidden");
+    } else {
+      var $mainForm = document.getElementById("edit-subscriptions-form");
+      $mainForm.submit();
+    }
+  }
+</script>
