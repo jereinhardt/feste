@@ -1,5 +1,5 @@
 Feste::Engine.routes.draw do
-  get "subscriptions/:token", to: "subscriptions#index", as: :subscriptions
-  put "subscriptions/:token", to: "subscriptions#update"
-  patch "subscriptions/:token", to: "subscriptions#update"
+  get "/", to: "subscriptions#index", as: :subscriptions
+  put "/", to: "subscriptions#update"
+  patch "/", to: "subscriptions#update"
 end

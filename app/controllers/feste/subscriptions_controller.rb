@@ -1,19 +1,18 @@
 module Feste
   class SubscriptionsController < ActionController::Base
+    include Feste::Authentication
+
     protect_from_forgery with: :exception
 
     before_action :find_or_create_subscriptions
 
     layout "feste/application"
 
-    helper Feste::SubscriptionHelpers
-
     def index
       @subscriber = subscriber
     end
 
     def update
-      @subscriber = subscriber
       if update_subscriptions
         flash[:success] = "You have successfully updated your subscriptions!"
       else
@@ -25,7 +24,8 @@ module Feste
     private
 
     def subscriber
-      Feste::Subscription.find_by(token: params[:token]).subscriber
+      current_user ||
+        Feste::Subscription.find_by(token: params[:token]).subscriber
     end
 
     def user_params

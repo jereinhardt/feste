@@ -2,10 +2,10 @@ require "active_record"
 
 require "feste/version"
 require "feste/engine" if defined?(Rails)
+require "feste/authentication/authentication"
 require "feste/user"
 require "feste/processor"
 require "feste/template_helper"
-require "feste/subscription_helper"
 require "feste/mailer"
 
 module Feste
@@ -18,7 +18,8 @@ module Feste
   self.options = {
     categories: [],
     host: nil,
-    email_source: :email
+    email_source: :email,
+    authenticate_with: nil
   }
 
   def self.configure
@@ -28,8 +29,7 @@ module Feste
       puts "FESTE CONFIGURATION WARNING: #{e}"
     end
   end
-
-  module Config
+   module Config
     def self.method_missing(meth, *args, &block)
       key = meth.to_s.slice(0, meth.to_s.length - 1).to_sym
       if Feste.options.has_key?(key)
