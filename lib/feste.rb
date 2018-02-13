@@ -16,6 +16,7 @@ module Feste
   end
 
   self.options = {
+    categories: [],
     host: nil,
     email_source: :email
   }

@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "byebug"
   spec.add_development_dependency "capybara"
+  spec.add_development_dependency "capybara-webkit"
   spec.add_development_dependency "factory_bot"
   spec.add_development_dependency "factory_bot_rails"
   spec.add_development_dependency "pg", "~> 0.18"

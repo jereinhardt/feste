@@ -24,6 +24,9 @@ RSpec.configure do |config|
   end
 end
 
+Capybara.javascript_driver = :webkit
+Capybara.default_max_wait_time = 6
+
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     with.test_framework :rspec

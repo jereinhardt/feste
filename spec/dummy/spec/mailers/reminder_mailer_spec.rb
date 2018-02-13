@@ -8,7 +8,7 @@ RSpec.describe ReminderMailer, type: :mailer do
         create(
           :subscription,
           canceled: true,
-          category: "Marketing Emails",
+          category: "Reminder Emails",
           subscriber: user
         )
 
@@ -24,13 +24,13 @@ RSpec.describe ReminderMailer, type: :mailer do
         subscription = create(
           :subscription,
           canceled: false,
-          category: "Marketing Emails",
+          category: "Reminder Emails",
           subscriber: user
         )
 
         email = ReminderMailer.send_reminder(user)   
         email_body = Capybara.string(email.body.to_s)
-        url = subscription_url(
+        url = subscriptions_url(
           token: subscription.token,
           host: ActionMailer::Base.default_url_options[:host]
         )

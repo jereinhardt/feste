@@ -1,0 +1,35 @@
+.modal-overlay {
+  background-color: rgba(200, 200, 200, 0.8);
+  height: 100%;
+  width: 100%;
+}
+
+.confirmation-modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  top: 50px;
+}
+
+.modal-header {
+  margin: 0;
+  font-size: 2em;
+}
+
+.modal-body {
+  color: #4f4d4b;
+  font-size: 1.2em;
+  font-weight: 600;
+}
