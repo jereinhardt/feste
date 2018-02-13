@@ -15,12 +15,11 @@ module Feste
     def update
       @subscriber = subscriber
       if update_subscriptions
-        flash[:success] = "You did it"
-        redirect_to subscriptions_path(token: params[:token])
+        flash[:success] = "You have successfully updated your subscriptions!"
       else
-        flash[:notice] = "uh Oh!"
-        render :index
+        flash[:notice] = "Something went wrong!  Please try again later."
       end
+      redirect_to subscriptions_path(token: params[:token])
     end
 
     private

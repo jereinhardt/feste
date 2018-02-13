@@ -30,7 +30,7 @@ RSpec.describe ReminderMailer, type: :mailer do
 
         email = ReminderMailer.send_reminder(user)   
         email_body = Capybara.string(email.body.to_s)
-        url = subscription_url(
+        url = subscriptions_url(
           token: subscription.token,
           host: ActionMailer::Base.default_url_options[:host]
         )

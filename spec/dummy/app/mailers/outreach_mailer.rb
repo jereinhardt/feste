@@ -1,5 +1,5 @@
 class OutreachMailer < ApplicationMailer
-  include FesteMailer
+  include Feste::Mailer
 
   categorize as: "Outreach Emails"
 
