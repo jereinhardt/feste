@@ -1,7 +1,7 @@
 
 <%= form_for @subscriber, url: subscriptions_path(token: params[:token]), method: :put, html: { id: "edit-subscriptions-form" } do |f| %>
   <%= f.hidden_field Feste.options[:email_source], id: "subscriber-email" %>
-  <%= f.fields_for @subscriber.subscriptions do |subscription_form| %>
+  <%= f.fields_for :subscriptions do |subscription_form| %>
     <% @subscriber.subscriptions.order(category: :asc).each do |subscription| %>
       <%= label_tag do %>
         <%= subscription.category %>

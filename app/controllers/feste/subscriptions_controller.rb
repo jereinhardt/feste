@@ -30,11 +30,11 @@ module Feste
 
     def user_params
       params.require(subscriber.class.to_s.downcase.to_sym).
-        permit(subscription: [])
+        permit(subscriptions: [])
     end
 
     def subscriptions_params
-      user_params[:subscription]
+      user_params[:subscriptions]
     end
 
     def update_subscriptions
