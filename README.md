@@ -23,13 +23,23 @@ mount Feste::Engine => "/email-subscriptions"
 
 ## Configuration
 
-There are a two major configurate options Feste makes available.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`, which is set to your `ActionMailer::Base.default_url_options[:host]` value by default.
+Feste organizes subscribable emails by seperating them into categories that you define (see `Mailer` for more details).  One configuration that is required for this is for you to provide an array listing all available category names.
+
+```ruby
+# initializers/feste.rb
+Feste.configure do |config|
+  config.categories = ["Marketing Emails", "Reminder Emails"]
+end
+```
+
+There are a two other optional configurations Feste makes available.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`, which is set to your `ActionMailer::Base.default_url_options[:host]` value by default.
 
 ```ruby
 # initializers/feste.rb
 Feste.configure do |config|
   config.email_source = :email
   config.host = ENV["FESTE_HOST"]
+  config.categories = [...]
 end
 ```
 
@@ -51,7 +61,7 @@ This will give your user model a `has_many` relationship to `subscriptions`.  Si
 
 In your mailer, include the `Feste::Mailer` module.
 
-Feste keeps track of email subscriptions by grouping mailer actions into categories that you define.  Your users will no be able to subscribe or unsubscibe to emails until you assign specific actions to a category.  In order to do this, you can call the `categorize` method within your mailer.  Doing so will automatically assign all actions in that mailer to the category you provide through the `as` option.
+Feste keeps track of email subscriptions by grouping mailer actions into categories that you define.  Your users will not be able to subscribe or unsubscibe to emails until you assign specific actions to a category.  In order to do this, you can call the `categorize` method within your mailer.  Doing so will automatically assign all actions in that mailer to the category you provide through the `as` option.
 
 ```ruby
 class CouponMailer < ApplicationMailer
@@ -92,13 +102,13 @@ In our view file, you can use the helper method `subscription_url` to link to th
 <a href="<%= subscription_url %>">click here to unsubscribe</a> 
 ```
 
-When a user clicks this link, they are taken to a page that allows them to unsubscribe from the email they received, or all emails coming from your application.  If they unsubscribe from all emails, the only emails that will be stopped will be those coming from mailers that have Feste's Mailer module included.  That way, you don't have to worry about users unsubscribing from essential emails coming from your application.  
+When a user clicks this link, they are taken to a page that allows them to choose which emails (by category) they would like to keep receiving, and which ones they would like to unsubscribe to. 
 
 ### When not to use
 
-It is recommended you DO NOT include the `Feste::Mailer` module in any mailer that handles improtant emails, such as password reset emails.  If you do, make sure to blacklist any important mailer actions.
+It is recommended you DO NOT include the `Feste::Mailer` module in any mailer that handles improtant emails, such as password reset emails.  If you do, make sure you do not categorize any improtant emails.
 
-It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, the `subscription_url` helper leads to a subsciption page meant only for the user targeted by the `subscriber` method in the mailer.  Exposing this page to other recipients may allow them to change another users subscription preferences.
+It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, it is assumed that each email is intended for only one recipient, and the `subscription_url` helper leads to a subsciption page meant only for that recipient.  Exposing this page to other users may allow them to change subscription preferences for others' accounts.
 
 ## Development
 
