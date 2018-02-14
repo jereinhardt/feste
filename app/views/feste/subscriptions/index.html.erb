@@ -1,4 +1,3 @@
-
 <%= form_for @subscriber, url: subscriptions_path(token: params[:token]), method: :put, html: { id: "edit-subscriptions-form" } do |f| %>
   <%= f.hidden_field Feste.options[:email_source], id: "subscriber-email" %>
   <%= f.fields_for :subscriptions do |subscription_form| %>
@@ -13,22 +12,24 @@
   <%= f.submit "Submit", class: "form-submit-button" %>
 <% end %>
 
-<div class="confirmation-modal-container hidden" id="confirmation-modal">
-  <div class="modal-overlay" data-js-modal-close="true">
-    <div class="modal-content">
-      <h4 class="modal-header">Please Confirm Your Email</h4>
-      <p class="modal-body">To continue, please verify your email address.</p>
-      <form action="#" class="cancel-subscription-form" id="cancel-subscription-form">
-        <div class="email-field-container" data-js-required="true">
-          <label class="error-label hidden" data-js-error="true">Please enter a valid email address</label>
-          <input type="text" name="email-confirmation-input" id="email-confirmation-input" class="email-field-input">
-        </div>
-        <button class="form-submit-button" id="cofirm-submit-button">Confirm</button>
-      </form>
+<% if params[:token].present? %>
+  <div class="confirmation-modal-container hidden" id="confirmation-modal">
+    <div class="modal-overlay" data-js-modal-close="true">
+      <div class="modal-content">
+        <h4 class="modal-header">Please Confirm Your Email</h4>
+        <p class="modal-body">To continue, please verify your email address.</p>
+        <form action="#" class="cancel-subscription-form" id="cancel-subscription-form">
+          <div class="email-field-container" data-js-required="true">
+            <label class="error-label hidden" data-js-error="true">Please enter a valid email address</label>
+            <input type="text" name="email-confirmation-input" id="email-confirmation-input" class="email-field-input">
+          </div>
+          <button class="form-submit-button" id="cofirm-submit-button">Confirm</button>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 
-<script type="text/javascript">
-  subscriptionVerification();
-</script>
+  <script type="text/javascript">
+    subscriptionVerification();
+  </script>
+<% end %>

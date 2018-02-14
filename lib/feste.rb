@@ -2,10 +2,10 @@ require "active_record"
 
 require "feste/version"
 require "feste/engine" if defined?(Rails)
+require "feste/authentication/authentication"
 require "feste/user"
 require "feste/processor"
 require "feste/template_helper"
-require "feste/subscription_helper"
 require "feste/mailer"
 
 module Feste
@@ -18,7 +18,8 @@ module Feste
   self.options = {
     categories: [],
     host: nil,
-    email_source: :email
+    email_source: :email,
+    authenticate_with: nil
   }
 
   def self.configure

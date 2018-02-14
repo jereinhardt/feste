@@ -1,19 +1,18 @@
 module Feste
   class SubscriptionsController < ActionController::Base
+    include Feste::Authentication
+
     protect_from_forgery with: :exception
 
-    before_action :find_or_create_subscriptions
+    before_action :get_user_data
 
     layout "feste/application"
-
-    helper Feste::SubscriptionHelpers
 
     def index
       @subscriber = subscriber
     end
 
     def update
-      @subscriber = subscriber
       if update_subscriptions
         flash[:success] = "You have successfully updated your subscriptions!"
       else
@@ -25,7 +24,8 @@ module Feste
     private
 
     def subscriber
-      Feste::Subscription.find_by(token: params[:token]).subscriber
+      @_subscriber ||= current_user ||
+        Feste::Subscription.find_by(token: params[:token])&.subscriber
     end
 
     def user_params
@@ -42,6 +42,14 @@ module Feste
       unsubscribed = Feste::Subscription.where.not(id: subscriptions_params)
       subscribed.update_all(canceled: false) && 
         unsubscribed.update_all(canceled: true)
+    end
+
+    def get_user_data
+      if subscriber.present?
+        find_or_create_subscriptions
+      else
+        render file: "#{Rails.root}/public/404.html",  status: 404
+      end
     end
 
     def find_or_create_subscriptions
