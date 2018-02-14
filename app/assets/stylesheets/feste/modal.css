@@ -17,6 +17,7 @@
   border: 1px solid #cbcbc9;
   border-radius: 2px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+  box-sizing: border-box;
   max-width: 500px;
   margin: 0 auto;
   padding: 1.875rem;
