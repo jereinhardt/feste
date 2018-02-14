@@ -23,7 +23,6 @@ RSpec.feature "user visits subscriptions path" do
         expect(page).to have_text("Outreach Emails")
         expect(page).to have_text("Marketing Emails")
         expect(page).to have_text("Reminder Emails")
-
         
         expect(outreach_checkbox.checked?).to be true
         expect(marketing_checkbox.checked?).to be true

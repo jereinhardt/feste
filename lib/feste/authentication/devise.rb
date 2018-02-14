@@ -4,7 +4,7 @@ module Feste
       private
 
       def current_user
-        @_current_user ||= main_app.scope.env['warden'].user
+        main_app.scope.env['warden'].user
       end
     end
   end

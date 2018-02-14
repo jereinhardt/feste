@@ -4,7 +4,7 @@ module Feste
       private
       
       def current_user
-        @_current_user ||= Feste.options[:authenticate_with].call(self)
+        Feste.options[:authenticate_with].call(self)
       end
     end
   end
