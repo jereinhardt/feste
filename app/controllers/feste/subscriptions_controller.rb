@@ -38,8 +38,9 @@ module Feste
     end
 
     def update_subscriptions
-      subscribed = Feste::Subscription.where(id: subscriptions_params)
-      unsubscribed = Feste::Subscription.where.not(id: subscriptions_params)
+      subscribed = subscriber.subscriptions.where(id: subscriptions_params)
+      unsubscribed = subscriber.subscriptions.where.
+        not(id: subscriptions_params)
       subscribed.update_all(canceled: false) && 
         unsubscribed.update_all(canceled: true)
     end
