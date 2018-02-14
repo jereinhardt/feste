@@ -57,6 +57,7 @@ Feste.configure do |config|
   config.email_source = :email
   config.host = ENV["FESTE_HOST"]
   config.categories = [...]
+  config.authenticate_with = :devise
 end
 ```
 

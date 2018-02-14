@@ -12,7 +12,7 @@
 
       <% if flash[:notice] || flash[:success] %>
         <% message = flash[:notice] || flash[:success] %>
-          <h4 class="flash-message <%= flash[:notice].present? ? 'background-red' : 'background-green' %>"><%= message %></h4>
+          <h4 class="flash-message <%= flash[:notice].present? ? 'flash-notice' : 'flash-success' %>"><%= message %></h4>
       <% end %>
 
       <main class="main-body">

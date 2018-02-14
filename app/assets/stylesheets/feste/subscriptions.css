@@ -1,16 +1,29 @@
+input {
+  font-size: 1rem;
+}
+
+.subscription-category-container {
+  padding: 0.325rem 0;
+  width: 100%;
+}
+
+.subscription-submit-button {
+  margin-top: 1.25rem;
+}
+
 .error-label {
   color: #aa1111;
   font-weight: 600;
 }
 
 .form-submit-button {
+  background: #aa1111;
   border: 0;
-  padding: 15px;
+  border-radius: 30px;
+  color: white;
   font-size: 1.2em;
   font-weight: 600;
-  color: white;
-  background: #aa1111;
-  border-radius: 30px;
+  padding: 15px;
 }
 
 .email-field-container {
@@ -21,20 +34,7 @@
   box-sizing: border-box;
   width: 100%;
   padding: 5px;
-  font-size: 1.5em;
-  text-align: center;
-  font-weight: 300;
-}
-
-.email-field-container {
-  margin-bottom: 1.2em;
-}
-
-.email-field-input {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 5px;
-  font-size: 1.5em;
+  font-size: 1em;
   text-align: center;
   font-weight: 300;
 }
