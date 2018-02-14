@@ -1,15 +1,22 @@
+<h3 class="subscriptions-tite">
+  Which emails would you like to keep receiving?
+</h3>
 <%= form_for @subscriber, url: subscriptions_path(token: params[:token]), method: :put, html: { id: "edit-subscriptions-form" } do |f| %>
   <%= f.hidden_field Feste.options[:email_source], id: "subscriber-email" %>
   <%= f.fields_for :subscriptions do |subscription_form| %>
     <% @subscriber.subscriptions.order(category: :asc).each do |subscription| %>
-      <%= label_tag do %>
-        <%= subscription.category %>
-        <%= subscription_form.check_box(nil, {id: "subscription-#{subscription.category.parameterize}", checked: !subscription.canceled?}, subscription.id, nil) %>
-      <% end %>
+      <div class="subscription-category-container">
+        <%= label_tag do %>
+          <%= subscription_form.check_box(nil, {id: "subscription-#{subscription.category.parameterize}", checked: !subscription.canceled?}, subscription.id, nil) %>
+          <span class="subscription-category-name">
+            <%= subscription.category %>
+          </span>
+        <% end %>
+      </div>
     <% end %>
   <% end %>
 
-  <%= f.submit "Submit", class: "form-submit-button" %>
+  <%= f.submit "Submit", class: "subscription-submit-button button button--submit" %>
 <% end %>
 
 <% if params[:token].present? %>
@@ -23,7 +30,7 @@
             <label class="error-label hidden" data-js-error="true">Please enter a valid email address</label>
             <input type="text" name="email-confirmation-input" id="email-confirmation-input" class="email-field-input">
           </div>
-          <button class="form-submit-button" id="cofirm-submit-button">Confirm</button>
+          <button class="button button--submit" id="cofirm-submit-button">Confirm</button>
         </form>
       </div>
     </div>

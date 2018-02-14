@@ -1,31 +1,16 @@
 body {
-  background: #ebebeb;
-  font-family: "Segoe UI",Arial,sans-serif;
-}
-
-.color-red {
-  color: #aa1111;
-}
-
-.background-red {
-  background: #aa1111;
-}
-
-.color-green {
-  color: #398c3c;
-}
-
-.background-green {
-  background: #398c3c;
+  background: transparent;
+  color: #4f4d4b;
+  font-family: "Whitney A", "Whitney B", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  margin: 0;
 }
 
 .container {
-  padding: 0 20px;
+  padding: 0 1.25rem;
 }
 
 .main-body {
   max-width: 750px;
-  margin: 0 auto;
 }
 
 .hidden {
@@ -33,11 +18,133 @@ body {
 }
 
 .flash-message {
+  border-radius: 30px;
   color: white;
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 3em;
   padding: 15px;
   text-align: center;
-  border-radius: 30px;
-  font-weight: 300;
-  font-size: 1.2em;
-  margin-bottom: 3em;
+}
+
+.flash-success {
+  background-color: #e6efc2;
+  color: #56651a;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.625rem;
+  padding: 0.625rem;
+  text-align: center;
+}
+
+.flash-notice {
+  background-color: #e5edf8;
+  color: #244e87;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.625rem;
+  padding: 0.625rem;
+  text-align: center;
+}
+
+.button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  -webkit-font-smoothing: antialiased;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, #ffffff), to(#f7f7f7));
+  background-image: linear-gradient(#ffffff 20%, #f7f7f7);
+  border-radius: 2px;
+  border: 1px solid #e4e4e3;
+  border-top-color: rgb(228, 228, 227);
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-right-color: rgb(228, 228, 227);
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-bottom-color: rgb(228, 228, 227);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-left-color: rgb(228, 228, 227);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: #4383c5;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Whitney A", "Whitney B", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 2.3;
+  padding: 0 1.25rem;
+  text-align: center;
+  text-decoration: none;
+  text-decoration-line: none;
+  text-decoration-style: initial;
+  text-decoration-color: initial;
+  -webkit-transition: all 0.2s cubic-bezier(0.39, 0.575, 0.565, 1);
+  transition: all 0.2s cubic-bezier(0.39, 0.575, 0.565, 1);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button.button--submit {
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(20%, #afca7d), to(#99bb59)), #99bb59;
+  background-image: linear-gradient(rgb(175, 202, 125) 20%, rgb(153, 187, 89)), initial;
+  background-position-x: initial, initial;
+  background-position-y: initial, initial;
+  background-size: initial, initial;
+  background-repeat-x: initial, initial;
+  background-repeat-y: initial, initial;
+  background-attachment: initial, initial;
+  background-origin: initial, initial;
+  background-clip: initial, initial;
+  background-color: rgb(153, 187, 89);
+  background: linear-gradient(#afca7d 20%, #99bb59), #99bb59;
+  background-image: linear-gradient(rgb(175, 202, 125) 20%, rgb(153, 187, 89)), initial;
+  background-position-x: initial, initial;
+  background-position-y: initial, initial;
+  background-size: initial, initial;
+  background-repeat-x: initial, initial;
+  background-repeat-y: initial, initial;
+  background-attachment: initial, initial;
+  background-origin: initial, initial;
+  background-clip: initial, initial;
+  background-color: rgb(153, 187, 89);
+  border: 1px solid #748e42;
+  border-top-color: rgb(116, 142, 66);
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-right-color: rgb(116, 142, 66);
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-bottom-color: rgb(116, 142, 66);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-left-color: rgb(116, 142, 66);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  display: inline-block;
+  font-size: 1rem;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
 }
