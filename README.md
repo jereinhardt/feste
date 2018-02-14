@@ -18,7 +18,7 @@ Once installed, you will need to mount Feste in your application
 
 ```ruby
 # config/routes.rb
-mount Feste::Engine => "/email-subscriptions"
+mount Feste::Engine => "/email-subscriptions", as: "feste"
 ```
 
 ## Configuration
@@ -125,7 +125,7 @@ When a user clicks this link, they are taken to a page that allows them to choos
 
 #### Application View
 
-The route to the subscriptions page is the root of the feste engine.  You can link to this page from anywhere in your app using the `subscriptions_url` helper.  When a logged in user visits this page from your application, they will be authenticated through the method which you provide in the configuration, and shown their email subscriptions.
+The route to the subscriptions page is the root of the feste engine.  You can link to this page from anywhere in your app using the `feste.subscriptions_url` helper (assuming the engine is mounted as 'feste').  When a logged in user visits this page from your application, they will be authenticated through the method which you provide in the configuration, and shown their email subscriptions.
 
 ### When not to use
 

@@ -25,7 +25,7 @@ module Feste
 
     def subscriber
       current_user ||
-        Feste::Subscription.find_by(token: params[:token]).subscriber
+        Feste::Subscription.find_by(token: params[:token])&.subscriber
     end
 
     def user_params
