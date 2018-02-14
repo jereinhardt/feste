@@ -31,6 +31,23 @@ Feste.configure do |config|
   config.categories = ["Marketing Emails", "Reminder Emails"]
 end
 ```
+When users visit the subscriptions page from an email they are given a token that identifies them.  In order to allow users to manage email subscriptions from your application, you must provide a method for identifying the user that is currently logged in.  This is done with the `authenticate_with` option.  Luckily, Feste provides authentication adapters for applications that use Devise and Clearance to manage user sessions.  Otherwise, you can provide a Proc that will be called to check the current user's authentication status.
+
+```ruby
+# initializers/feste.rb
+authentication_method = Proc.new do |controller|
+  ::User.find_by(id: controller.session[:user_id])
+end
+
+Feste.configure do |config|
+  # for applications that use clearance
+  config.authenticate_with = :clearance
+  # for applications that use devise
+  config.authenticate_with = :devise
+  # for applications that use custom authentication
+  config.authenticate_with = authentication_method
+end
+```
 
 There are a two other optional configurations Feste makes available.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`, which is set to your `ActionMailer::Base.default_url_options[:host]` value by default.
 
@@ -96,6 +113,8 @@ end
 
 ### View
 
+#### Mailer View
+
 In our view file, you can use the helper method `subscription_url` to link to the page where users can manage their subscriptions.
 
 ```html
@@ -103,6 +122,10 @@ In our view file, you can use the helper method `subscription_url` to link to th
 ```
 
 When a user clicks this link, they are taken to a page that allows them to choose which emails (by category) they would like to keep receiving, and which ones they would like to unsubscribe to. 
+
+#### Application View
+
+The route to the subscriptions page is the root of the feste engine.  You can link to this page from anywhere in your app using the `subscriptions_url` helper.  When a logged in user visits this page from your application, they will be authenticated through the method which you provide in the configuration, and shown their email subscriptions.
 
 ### When not to use
 

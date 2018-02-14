@@ -29,7 +29,8 @@ module Feste
       puts "FESTE CONFIGURATION WARNING: #{e}"
     end
   end
-   module Config
+  
+  module Config
     def self.method_missing(meth, *args, &block)
       key = meth.to_s.slice(0, meth.to_s.length - 1).to_sym
       if Feste.options.has_key?(key)
