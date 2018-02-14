@@ -2,7 +2,7 @@ ENV["RAILS_ENV"] ||= "test"
 
 require "byebug"
 require "feste"
-Dir[File.expand_path("/Users/jereinhardt/Documents/feste/app/models/**/*.rb", __FILE__)].sort.each { |file| require file }
+Dir[File.expand_path("/Users/jereinhardt/Documents/feste/app/**/*.rb", __FILE__)].sort.each { |file| require file }
 require "action_mailer"
 require "factory_bot" unless defined?(FactoryBot)
 require "factories"
