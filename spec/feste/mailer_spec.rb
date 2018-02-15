@@ -28,30 +28,60 @@ RSpec.describe Feste::Mailer do
     end
   end
 
-  describe "#mail", :stubbed_email do
+  describe "#mail" do
     context "when the mailer action has been categorized" do
-      it "creates a Feste::Processor instance and processes an email" do
-        allow(ActiveRecord::Base).
-          to receive(:descendants).and_return([TestUser])
-        subscription = double(Feste::Subscription, token: "token")
-        allow(Feste::Subscription).
-          to receive(:get_token_for).and_return(subscription.token)
+      context "when the user has unsubscribed" do
+        it "returns nil" do
+          allow(ActiveRecord::Base).
+            to receive(:descendants).and_return([TestUser])   
+          subscription = double(
+            Feste::Subscription,
+            token: "token",
+            canceled?: true
+          )
+          allow(Feste::Subscription).
+            to receive(:get_token_for).and_return(subscription.token) 
+          allow(Feste::Subscription).
+            to receive(:find_or_create_by).and_return(subscription) 
 
-        user = TestUser.new
-        allow(Feste::Subscription).
-          to receive(:find_subscribed_user).and_return(user)
+          user = TestUser.new
+          allow(Feste::Subscription).
+            to receive(:find_subscribed_user).and_return(user)
 
-        message = MainMailer.send_mail(user)
-        allow(Feste::Processor).to receive_message_chain(:new, :process)
+          message = MainMailer.send_mail(user).deliver_now
 
-        message.deliver_now
+          expect(message).to be nil
+        end  
+      end
 
-        expect(Feste::Processor).to have_received(:new)
+      context "when the user is still subscribed" do
+        it "sends the email" do
+          allow(ActiveRecord::Base).
+            to receive(:descendants).and_return([TestUser])   
+          subscription = double(
+            Feste::Subscription,
+            token: "token",
+            canceled?: false
+          )
+          allow(Feste::Subscription).
+            to receive(:get_token_for).and_return(subscription.token) 
+          allow(Feste::Subscription).
+            to receive(:find_or_create_by).and_return(subscription) 
+
+          user = TestUser.new
+          allow(Feste::Subscription).
+            to receive(:find_subscribed_user).and_return(user)
+
+          message = MainMailer.send_mail(user)
+
+          expect { message.deliver_now }.
+            to raise_error(ActionView::MissingTemplate)
+        end
       end
     end
 
     context "when the mailer action has not been categorized" do
-      it "does not process the email" do
+      it "sends the email" do
         allow(ActiveRecord::Base).
           to receive(:descendants).and_return([TestUser])
         subscription = double(Feste::Subscription, token: "token")
@@ -60,25 +90,9 @@ RSpec.describe Feste::Mailer do
         allow(Feste::Subscription).
           to receive(:find_subscribed_user).and_return(user)
         message = MainMailer.send_less_mail(user)
-        allow(Feste::Processor).to receive(:new)
 
-        message.deliver_now
-
-        expect(Feste::Processor).not_to have_received(:new)
-      end
-    end
-
-    context "when there is no record with the given email address" do
-      it "does not process the email" do
-        allow(ActiveRecord::Base).
-          to receive(:descendants).and_return([TestUser])
-        allow(TestUser).to receive(:find_by).and_return(nil)
-        message = MainMailer.send_less_mail(TestUser.new)
-        allow(Feste::Processor).to receive(:new)
-
-        message.deliver_now
-
-        expect(Feste::Processor).not_to have_received(:new)
+        expect { message.deliver_now }.
+          to raise_error(ActionView::MissingTemplate)
       end
     end
   end

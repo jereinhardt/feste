@@ -16,14 +16,13 @@ module Feste
 
         email = headers[:to].is_a?(String) ? headers[:to] : headers[:to].first
         subscriber = Feste::Subscription.find_subscribed_user(email)
-        generate_subscription_token!(subscriber)
 
-        message = super
-
-        if process_email_subscription?(subscriber)
-          Feste::Processor.new(message, self, action_name).process
+        if recipient_subscribed?(subscriber)
+          generate_subscription_token!(subscriber)
+          message = super
+        else
+          nil
         end
-        message
       end
 
       private
@@ -40,6 +39,19 @@ module Feste
           self.action_categories[action_name.to_sym] ||
             self.action_categories[:all]
         )
+      end
+
+      def recipient_subscribed?(subscriber)
+        category = self.action_categories[action_name.to_sym] || 
+          self.action_categories[:all]
+        if subscriber.present? && category.present?
+          !Feste::Subscription.find_or_create_by(
+            category: category,
+            subscriber: subscriber
+          ).canceled?
+        else
+          true
+        end
       end
     end
 

@@ -12,9 +12,9 @@ RSpec.describe ReminderMailer, type: :mailer do
           subscriber: user
         )
 
-        email = ReminderMailer.send_reminder(user)
+        email = ReminderMailer.send_reminder(user).deliver_now
 
-        expect(email.to).to eq([])
+        expect(email).to be nil
       end
     end
 
