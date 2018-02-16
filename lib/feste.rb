@@ -3,8 +3,10 @@ require "active_record"
 require "feste/version"
 require "feste/engine" if defined?(Rails)
 require "feste/authentication/authentication"
+require "feste/authentication/clearance"
+require "feste/authentication/custom"
+require "feste/authentication/devise"
 require "feste/user"
-require "feste/processor"
 require "feste/template_helper"
 require "feste/mailer"
 
