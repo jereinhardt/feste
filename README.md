@@ -141,13 +141,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/jerein
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
 l create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/jereinhardt/feste.
-
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
