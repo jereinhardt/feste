@@ -32,7 +32,7 @@ module Feste
       ActiveRecord::Base.descendants.select do |klass|
         klass.included_modules.include?(Feste::User)
       end
-    end 
+    end
 
     def generate_token
       if !self.token
