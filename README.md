@@ -14,7 +14,7 @@ And then execute:
     $ rails generate feste:install
     $ rake db:migrate
 
-Once installed, you will need to mount Feste in your application
+Once installed, you will need to mount Feste in your application.
 
 ```ruby
 # config/routes.rb
@@ -23,15 +23,11 @@ mount Feste::Engine => "/email-subscriptions", as: "feste"
 
 ## Configuration
 
-Feste organizes subscribable emails by seperating them into categories that you define (see `Mailer` for more details).  One configuration that is required for this is for you to provide an array listing all available category names.
+Feste organizes subscribable emails by separating them into categories that you define (see `Mailer` for more details).  This requires an array of available category names to be provided to the `categories` configuration. One configuration that is required for this is for you to provide an array listing all available category names.
 
-```ruby
-# initializers/feste.rb
-Feste.configure do |config|
-  config.categories = ["Marketing Emails", "Reminder Emails"]
-end
-```
-When users visit the subscriptions page from an email they are given a token that identifies them.  In order to allow users to manage email subscriptions from your application, you must provide a method for identifying the user that is currently logged in.  This is done with the `authenticate_with` option.  Luckily, Feste provides authentication adapters for applications that use Devise and Clearance to manage user sessions.  Otherwise, you can provide a Proc that will be called to check the current user's authentication status.
+Out of the box, Feste allows your users to manage their subscriptions from a url in their email, which includes an identifying token.  If you would like for them to be able to do so from within your application, you will need to provide a method for identifying the currently logged in user.  Luckily, Feste provides authentication adapters for applications that use Devise and Clearance to manage user sessions.  Otherwise, you can provide a Proc to the `authenticate_with` option.
+
+Optionally, you can set the attribute your user model uses to reference your user's email address (`email_source`), the host is used by the `subscriptions_url` helper (`host`).
 
 ```ruby
 # initializers/feste.rb
@@ -40,27 +36,20 @@ authentication_method = Proc.new do |controller|
 end
 
 Feste.configure do |config|
+  # set your category names
+  config.categories = []
   # for applications that use clearance
   config.authenticate_with = :clearance
   # for applications that use devise
   config.authenticate_with = :devise
   # for applications that use custom authentication
   config.authenticate_with = authentication_method
-end
-```
-
-There are a two other optional configurations Feste makes available.  The first is `email_source`.  This is the attribute on your user model that references the user's email address.  It is set to `email` by default, but can be changed to an alias attribute or method.  The second configuration option is `host`, which is set to your `ActionMailer::Base.default_url_options[:host]` value by default.
-
-```ruby
-# initializers/feste.rb
-Feste.configure do |config|
+  # set the email attribute of your user model
   config.email_source = :email
-  config.host = ENV["FESTE_HOST"]
-  config.categories = [...]
-  config.authenticate_with = :devise
+  # set the host for subscription_url
+  config.host = ActionMailer::Base.default_url_options[:host]
 end
 ```
-
 ## Usage
 
 ### Model
@@ -79,7 +68,7 @@ This will give your user model a `has_many` relationship to `subscriptions`.  Si
 
 In your mailer, include the `Feste::Mailer` module.
 
-Feste keeps track of email subscriptions by grouping mailer actions into categories that you define.  Your users will not be able to subscribe or unsubscibe to emails until you assign specific actions to a category.  In order to do this, you can call the `categorize` method within your mailer.  Doing so will automatically assign all actions in that mailer to the category you provide through the `as` option.
+Feste keeps track of email subscriptions by grouping mailer actions into categories that you define.  Your users will not be able to subscribe or unsubscribe to emails until you assign specific actions to a category.  In order to do this, you can call the `categorize` method within your mailer.  Doing so will automatically assign all actions in that mailer to the category you provide through the `as` option.
 
 ```ruby
 class CouponMailer < ApplicationMailer
@@ -93,7 +82,7 @@ class CouponMailer < ApplicationMailer
 end
 ```
 
-If you only want to categorize specific actions in a mailer to a category, you can do so by listing those actions in an array as your first arguement.
+If you only want to categorize specific actions in a mailer, you can do so by listing those actions in an array as your first arguement.
 
 ```ruby
 class CouponMailer < ApplicationMailer
@@ -130,15 +119,24 @@ The route to the subscriptions page is the root of the feste engine.  You can li
 
 ### When not to use
 
-It is recommended you DO NOT include the `Feste::Mailer` module in any mailer that handles improtant emails, such as password reset emails.  If you do, make sure you do not categorize any improtant emails.
-
-It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, it is assumed that each email is intended for only one recipient, and the `subscription_url` helper leads to a subsciption page meant only for that recipient.  Exposing this page to other users may allow them to change subscription preferences for others' accounts.
+It is recommended you DO NOT include any important emails, such as password reset emails, into a subscribable category.  It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, it is assumed that each email is intended for only one recipient, and the `subscription_url` helper leads to a subsciption page meant only for that recipient.  Exposing this page to other users may allow them to change subscription preferences for someone else's account.
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/jereinhardt/feste.
+
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+l create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
