@@ -25,7 +25,11 @@ module Feste
     private
 
     def self.user_models
-      @_user_models ||= ActiveRecord::Base.descendants.select do |klass|
+      @_user_models ||= Feste.options[:model_hierarchy] || included_models
+    end
+
+    def self.included_models
+      ActiveRecord::Base.descendants.select do |klass|
         klass.included_modules.include?(Feste::User)
       end
     end
