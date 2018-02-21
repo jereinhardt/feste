@@ -12,7 +12,7 @@ module Feste
 
     module InstanceMethods
       def mail(headers = {}, &block)
-        if process_current_action?
+        if current_action_category.present?
           return message if @_mail_was_called && headers.blank? && !block
 
           email = headers[:to].is_a?(String) ? headers[:to] : headers[:to].first
@@ -33,7 +33,7 @@ module Feste
 
       private
 
-      def process_current_action?
+      def current_action_category
         self.action_categories[action_name.to_sym] || 
           self.action_categories[:all]
       end
@@ -44,16 +44,10 @@ module Feste
       end
 
       def recipient_subscribed?(subscriber)
-        if subscriber.present?
-          category = self.action_categories[action_name.to_sym] ||
-            self.action_categories[:all]
-          !Feste::Subscription.find_or_create_by(
-            category: category,
-            subscriber: subscriber
-          ).canceled?
-        else
-          false
-        end
+        !Feste::Subscription.find_or_create_by(
+          category: current_action_category,
+          subscriber: subscriber
+        )&.canceled?
       end
     end
 
