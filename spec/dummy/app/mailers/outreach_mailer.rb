@@ -4,6 +4,6 @@ class OutreachMailer < ApplicationMailer
   categorize as: "Outreach Emails"
 
   def request_donation(user)
-    mail(to: user.email, from: "support@app.com")
+    mail(to: user.email, from: "support@app.com", subscriber: user)
   end
 end
