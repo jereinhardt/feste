@@ -27,7 +27,7 @@ Feste organizes subscribable emails by separating them into categories that you 
 
 Out of the box, Feste allows your users to manage their subscriptions from a url in their email, which includes an identifying token.  If you would like for them to be able to do so from within your application, you will need to provide a method for identifying the currently logged in user.  Luckily, Feste provides authentication adapters for applications that use Devise and Clearance to manage user sessions.  Otherwise, you can provide a Proc to the `authenticate_with` option.
 
-Optionally, you can set the attribute your user model(s) use(s) to reference a user's email address (`email_source`) and the host that is used by the `subscriptions_url` helper (`host`).  If you have multiple databse tables that store email addresses, and might have duplicates between them, you can provide the `model_hierarchy` option with an array of model classes, arranged from highest to lowest priorty (See <a href="#mailer">Model</a> for more details.)
+Optionally, you can set the attribute your user model(s) use(s) to reference a user's email address (`email_source`) and the host that is used by the `subscriptions_url` helper (`host`).
 
 ```ruby
 # initializers/feste.rb
@@ -48,8 +48,6 @@ Feste.configure do |config|
   config.email_source = :email
   # set the host for subscription_url
   config.host = ActionMailer::Base.default_url_options[:host]
-  # set a priorty hierarchy of models that might share email addresses
-  config.model_hierarchy = nil
 end
 ```
 ## Usage
@@ -66,13 +64,13 @@ end
 
 This will give your user model a `has_many` relationship to `subscriptions`.  Since this relationship is polymorphic, your can include the `Feste::User` module in multiple models.  
 
-Please note that if you use multiple database tables to house user data, and different tables have duplicate email addresses between them, this may cause issues when Feste tries to find a record based on an email address.  This issue can be avoided by creating an array of model classes arranged in the order Feste should look for a record, with the highest priority model first (i.e. `[User, Lead, Inquirer]`).  Assign this array as the value of the `model_hierarchy` configuration option (see <a href="#configuration">Configuration</a> for more).
-
 ### Mailer
 
 In your mailer, include the `Feste::Mailer` module.
 
 Feste keeps track of email subscriptions by grouping mailer actions into categories that you define.  Your users will not be able to subscribe or unsubscribe to emails until you assign specific actions to a category.  In order to do this, you can call the `categorize` method within your mailer.  Doing so will automatically assign all actions in that mailer to the category you provide through the `as` option.
+
+When calling the `mail` method within an action, make sure to explicitly state which user the subscription should be applied to using the `subscriber` option.
 
 ```ruby
 class CouponMailer < ApplicationMailer
@@ -81,7 +79,7 @@ class CouponMailer < ApplicationMailer
   categorize as: "Marketing Emails"
 
   def send_coupon(user)
-    mail(to: user.email, from: "support@here.com")
+    mail(to: user.email, from: "support@here.com", subscriber: user)
   end
 end
 ```
@@ -96,11 +94,11 @@ class CouponMailer < ApplicationMailer
   categorize [:send_coupon_reminder], as: "Reminder Emails"
 
   def send_coupon(user)
-    mail(to: user.email, from: "support@here.com")
+    mail(to: user.email, from: "support@here.com", subscriber: user)
   end
 
   def send_coupon_reminder(user)
-    mail(to: user.email, from: "support@here.com")
+    mail(to: user.email, from: "support@here.com", subscriber: user)
   end
 end
 ```
