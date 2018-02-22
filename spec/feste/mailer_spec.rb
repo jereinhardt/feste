@@ -4,14 +4,14 @@ RSpec.describe Feste::Mailer do
   describe ".categorize" do
     it "adds all mailer actions to a category" do
       expect(MainMailer.action_categories[:send_mail]).
-        to eq("Marketing Emails")
+        to eq(:marketing_emails)
     end
 
     it "adds selected mailer actions to a category" do
       class TestMailer < ActionMailer::Base
         include Feste::Mailer
 
-        categorize [:test_action], as: "Marketing Emails"
+        categorize [:test_action], as: :marketing_emails
 
         def test_action(user)
           mail(to: user.email, from: "support@test.com")
@@ -23,7 +23,7 @@ RSpec.describe Feste::Mailer do
       end
 
       expect(TestMailer.action_categories[:test_action]).
-        to eq("Marketing Emails")
+        to eq(:marketing_emails)
       expect(TestMailer.action_categories[:ignore_action]).to be nil
     end
   end

@@ -22,6 +22,10 @@ module Feste
       end&.find_by(Feste.options[:email_source] => email)
     end
 
+    def category_name
+      I18n.t("feste.categories.#{category}", default: category.titleize)
+    end
+
     private
 
     def self.user_models

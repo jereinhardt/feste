@@ -23,7 +23,7 @@ mount Feste::Engine => "/email-subscriptions", as: "feste"
 
 ## Configuration
 
-Feste organizes subscribable emails by separating them into categories that you define (see <a href="#mailer">Mailer</a> for more details).  This requires an array of available category names to be provided to the `categories` configuration.
+Feste organizes subscribable emails by separating them into categories that you define (see <a href="#mailer">Mailer</a> for more details).  This requires an array of available categories (represented by symbols) to be provided to the `categories` configuration.
 
 Out of the box, Feste allows your users to manage their subscriptions from a url in their email, which includes an identifying token.  If you would like for them to be able to do so from within your application, you will need to provide a method for identifying the currently logged in user.  Luckily, Feste provides authentication adapters for applications that use Devise and Clearance to manage user sessions.  Otherwise, you can provide a Proc to the `authenticate_with` option.
 
@@ -37,7 +37,7 @@ end
 
 Feste.configure do |config|
   # set your category names
-  config.categories = []
+  config.categories = [:marketing_emails, :reminder_emails]
   # for applications that use clearance
   config.authenticate_with = :clearance
   # for applications that use devise
@@ -76,7 +76,7 @@ When calling the `mail` method within an action, make sure to explicitly state w
 class CouponMailer < ApplicationMailer
   include Feste::Mailer
 
-  categorize as: "Marketing Emails"
+  categorize as: :marketing_emails
 
   def send_coupon(user)
     mail(to: user.email, from: "support@here.com", subscriber: user)
@@ -90,8 +90,8 @@ If you only want to categorize specific actions in a mailer, you can do so by li
 class CouponMailer < ApplicationMailer
   include Feste::Mailer
 
-  categorize [:send_coupon], as: "Marketing Emails"
-  categorize [:send_coupon_reminder], as: "Reminder Emails"
+  categorize [:send_coupon], as: :marketing_emails
+  categorize [:send_coupon_reminder], as: :reminder_emails
 
   def send_coupon(user)
     mail(to: user.email, from: "support@here.com", subscriber: user)
@@ -118,6 +118,20 @@ When a user clicks this link, they are taken to a page that allows them to choos
 #### Application View
 
 The route to the subscriptions page is the root of the feste engine.  You can link to this page from anywhere in your app using the `feste.subscriptions_url` helper (assuming the engine is mounted as 'feste').  When a logged in user visits this page from your application, they will be authenticated through the method which you provide in the configuration, and shown their email subscriptions.
+
+### Human Readable Category Names
+
+In order to create category names that are human readable, add a `feste.categories`section to your i18n `locales` files.  Create keys in this section that correspond to the `categories` configuration.
+
+```yml
+# config/locales/en.yml
+
+en:
+  feste:
+    categories:
+      marketing_emails: Marketing Emails
+      reminder_emails: Reminder Emails
+```
 
 ### When not to use
 
