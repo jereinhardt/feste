@@ -8,8 +8,8 @@ module Feste
     # email category
     # @param [Subscriber, ActionMailer::Base, Symbol]
     #
-    # If the subscription does not exist, it creates it in order to return the
-    # token.  If the action has not category, then the subscription is not
+    # If the subscription does not exist, one is created in order to return the
+    # token.  If the action is not categorized, then the subscription is not
     # created, the exception is rescued, and nil is returned.
     #
     # @return [String, nil], the token or nil if a category cannot be found.

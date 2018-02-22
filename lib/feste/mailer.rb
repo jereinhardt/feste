@@ -15,7 +15,7 @@ module Feste
       # and if the subscriber is unsubscribed
       # @param [Hash, &block]
       #
-      # The subscriber is supplied as an argument in the headers through the as
+      # The subscriber is supplied as an argument in the headers through the
       # :subscriber key. The :subscriber key is stripped from the headers before
       # they are given as an argument to the superclass.  If no subscriber is
       # provided, then one will be inferred from the :to header.
