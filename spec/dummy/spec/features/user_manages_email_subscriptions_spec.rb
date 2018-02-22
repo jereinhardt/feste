@@ -7,7 +7,7 @@ RSpec.feature "user manages email subscriptions", js: true do
       subscription = create(
         :subscription,
         subscriber: user,
-        category: "Marketing Emails"
+        category: :marketing_emails
       )
 
       visit subscriptions_path(token: subscription.token)
@@ -35,7 +35,7 @@ RSpec.feature "user manages email subscriptions", js: true do
       subscription = create(
         :subscription,
         subscriber: user,
-        category: "Marketing Emails"
+        category: :marketing_emails
       ) 
 
       visit subscriptions_path(token: subscription.token)

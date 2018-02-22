@@ -1,7 +1,7 @@
 class MarketingMailer < ApplicationMailer
   include Feste::Mailer
 
-  categorize as: "Marketing Emails"
+  categorize as: :marketing_emails
 
   def send_newsletter(user)
     mail(to: user.email, from: "support@app.com", subscriber: user)

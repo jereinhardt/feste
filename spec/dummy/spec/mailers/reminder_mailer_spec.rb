@@ -8,7 +8,7 @@ RSpec.describe ReminderMailer, type: :mailer do
         create(
           :subscription,
           canceled: true,
-          category: "Reminder Emails",
+          category: :reminder_emails,
           subscriber: user
         )
 
@@ -24,7 +24,7 @@ RSpec.describe ReminderMailer, type: :mailer do
         subscription = create(
           :subscription,
           canceled: false,
-          category: "Reminder Emails",
+          category: :reminder_emails,
           subscriber: user
         )
 

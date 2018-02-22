@@ -7,9 +7,9 @@
     <% @subscriber.subscriptions.order(category: :asc).each do |subscription| %>
       <div class="subscription-category-container">
         <%= label_tag do %>
-          <%= subscription_form.check_box(nil, {id: "subscription-#{subscription.category.parameterize}", checked: !subscription.canceled?}, subscription.id, nil) %>
+          <%= subscription_form.check_box(nil, {id: "subscription-#{subscription.category_name.parameterize}", checked: !subscription.canceled?}, subscription.id, nil) %>
           <span class="subscription-category-name">
-            <%= subscription.category %>
+            <%= subscription.category_name %>
           </span>
         <% end %>
       </div>

@@ -31,3 +31,8 @@
 
 en:
   hello: "Hello world"
+  feste:
+    categories:
+      marketing_emails: Marketing Emails
+      outreach_emails: Outreach Emails
+      reminder_emails: Reminder Emails
