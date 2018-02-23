@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Josh Reinhardt"]
   spec.email         = ["joshua.e.reinhardt@gmail.com"]
 
-  spec.summary       = %q{Allow your users to manage their email subscriptions.}
-  spec.description   = %q{Give users of your application the ability to manage their email subscriptions.}
+  spec.summary       = %q{Email subscription management for Rails applications.}
+  spec.description   = %q{Give your users the ability to manage their email subscriptions in your Rails application.}
   spec.homepage      = "https://github.com/jereinhardt/feste"
   spec.license       = "MIT"
 

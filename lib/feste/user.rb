@@ -12,6 +12,9 @@ module Feste
     end
 
     module InstanceMethods
+      # Return the email address of the subscriber.
+      #
+      # @return [String]
       def email_source
         send(Feste.options[:email_source])
       end

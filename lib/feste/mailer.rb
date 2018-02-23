@@ -11,6 +11,17 @@ module Feste
     end
 
     module InstanceMethods
+      # Returns a Mail object or nil based on if the action has been categorized
+      # and if the subscriber is unsubscribed
+      # @param [Hash, &block]
+      #
+      # The subscriber is supplied as an argument in the headers through the
+      # :subscriber key. The :subscriber key is stripped from the headers before
+      # they are given as an argument to the superclass.  If no subscriber is
+      # provided, then one will be inferred from the :to header.
+      #
+      # @return [Mail, nil], the Mail object or nil if the subscriber is
+      # unsubscribed
       def mail(headers = {}, &block)
         if current_action_category.present?
           return message if @_mail_was_called && headers.blank? && !block
@@ -52,6 +63,54 @@ module Feste
     end
 
     module ClassMethods
+      # Assign action(s) to a category
+      # @param [Array, Symbol]
+      #
+      # The actions in the mailer that are included in the given category can be
+      # limited by listing them in an array of symbols.
+      #
+      #     class ReminderMailer < ActionMailer::Base
+      #       
+      #       categorize [:send_reminder, :send_update], as: :reminder_emails
+      #
+      #       def send_reminder(user)
+      #         ...
+      #       end
+      #
+      #       def send_update(user)
+      #         ...
+      #       end
+      #
+      #       def send_alert(user)
+      #         ...
+      #       end
+      #     end
+      #
+      #     ReminderMailer.action_categories => {
+      #       send_reminder: :reminder_emails,
+      #       send_update: :reminder_emails
+      #     }
+      #
+      # If no array is provided, all actions in the mailer will be categorized.
+      #
+      #     class ReminderMailer < ActionMailer::Base
+      #       
+      #       categorize as: :reminder_emails
+      #
+      #       def send_reminder(user)
+      #         ...
+      #       end
+      #
+      #       def send_update(user)
+      #         ...
+      #       end
+      #
+      #       def send_alert(user)
+      #         ...
+      #       end
+      #     end
+      #
+      #     ReminderMailer.action_categories => { all: :reminder_emails }
       def categorize(meths = [], as:)
         actions = meths.empty? ? [:all] : meths
         actions.each { |action| self.action_categories[action.to_sym] = as }
