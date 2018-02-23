@@ -21,8 +21,7 @@ module Feste
     categories: [],
     host: nil,
     email_source: :email,
-    authenticate_with: nil,
-    model_hierarchy: nil
+    authenticate_with: nil
   }
 
   def self.configure
