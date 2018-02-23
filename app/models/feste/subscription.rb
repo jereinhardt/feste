@@ -10,11 +10,11 @@ module Feste
     #
     # If the subscription does not exist, one is created in order to return the
     # token.  If the action is not categorized, then the subscription is not
-    # created, the exception is rescued, and nil is returned.
+    # created, and nil is returned.
     #
     # @return [String, nil], the token or nil if a category cannot be found.
     def self.get_token_for(subscriber, mailer, action)
-      begin
+      transaction do
         category = mailer.action_categories[action.to_sym] || 
           mailer.action_categories[:all]
         subscription = Feste::Subscription.find_or_create_by(
@@ -22,8 +22,6 @@ module Feste
           category: category
         )
         subscription.token
-      rescue ActiveRecord::NotNullViolation
-        nil
       end
     end
 
