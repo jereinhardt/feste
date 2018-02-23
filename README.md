@@ -1,4 +1,4 @@
-:email: Feste is an easy way to give your users the ability to manage email subscriptions in your Rails applications.
+:email: Feste is an easy way to give your users the ability to manage email subscriptions in your Rails application.
 
 ## Installation
 
