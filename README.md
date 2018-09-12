@@ -154,7 +154,7 @@ class EventSubscriber
   end
 
   def resubscribe(event)
-    # This method is called whenever a user subscribes to a mailing list they were previously unsubscribed to/
+    # This method is called whenever a user subscribes to a mailing list they were previously unsubscribed to.
   end
 end
 ```
