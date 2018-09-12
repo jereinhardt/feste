@@ -40,7 +40,7 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
     end
 
     context "when a user unsubscribes" do
-      it "triggers the unsubscribe listener" do
+      it "calls the unsubscribe event subscriber" do
         expect_any_instance_of(EventSubscriber).to receive(:unsubscribe)
 
         subscriber = create(:user)
@@ -52,7 +52,7 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
     end
 
     context "when a user resubscribes" do
-      it "triggers the resubscribe listener" do
+      it "calls the resubscribe event subscriber" do
         expect_any_instance_of(EventSubscriber).to receive(:resubscribe)
 
         subscriber = create(:user)
@@ -71,7 +71,7 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
     end
 
     context "when a user resubscribes and unsubscribes" do
-      it "sends the unsubscribe and resubscribe " do
+      it "calls the unsubscribe and resubscribe event subscribers" do
         expect_any_instance_of(EventSubscriber).to receive(:unsubscribe)
         expect_any_instance_of(EventSubscriber).to receive(:resubscribe)
 
