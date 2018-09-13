@@ -42,18 +42,21 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
     context "when a user unsubscribes" do
       it "calls the unsubscribe event callback" do
         expect_any_instance_of(CallbackHandler).to receive(:unsubscribe)
+        expect_any_instance_of(CallbackHandler).not_to receive(:resubscribe)
 
         subscriber = create(:user)
         create_subscriptions_list_for(subscriber)
         token = subscriber.subscriptions.last.token
+        id = subscriber.subscriptions.last.id
 
-        put :update, params: { token: token, user: { subscriptions: "" } }
+        put :update, params: { token: token, user: { subscriptions: [id] } }
       end
     end
 
     context "when a user resubscribes" do
       it "calls the resubscribe event callback" do
         expect_any_instance_of(CallbackHandler).to receive(:resubscribe)
+        expect_any_instance_of(CallbackHandler).not_to receive(:unsubscribe)
 
         subscriber = create(:user)
         create_subscriptions_list_for(

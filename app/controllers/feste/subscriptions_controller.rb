@@ -53,8 +53,9 @@ module Feste
 
     def user_unsubscribing_from_emails?
       subscription_ids = user_params[:subscriptions]&.map(&:to_i) || []
-      subscriber.subscriptions.where(canceled: false).pluck(:id).sort !=
-        subscription_ids.sort
+      subscriber.subscriptions.where(canceled: false).pluck(:id).any? do |id|
+        !subscription_ids.include?(id)
+      end
     end
 
     def user_resubscribing_to_emails?
