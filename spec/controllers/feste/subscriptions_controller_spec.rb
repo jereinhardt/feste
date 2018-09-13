@@ -15,19 +15,19 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
 
   describe "#update" do
     before do
-      class EventSubscriber
+      class CallbackHandler
         def unsubscribe(event); end
         def resubscribe(event); end
       end
 
       Feste.configure do |config|
-        config.event_subscriber = EventSubscriber.new
+        config.callback_handler = CallbackHandler.new
       end
     end
 
     after do
       Feste.configure do |config|
-        config.event_subscriber = nil
+        config.callback_handler = nil
       end
     end
 
@@ -40,8 +40,8 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
     end
 
     context "when a user unsubscribes" do
-      it "calls the unsubscribe event subscriber" do
-        expect_any_instance_of(EventSubscriber).to receive(:unsubscribe)
+      it "calls the unsubscribe event callback" do
+        expect_any_instance_of(CallbackHandler).to receive(:unsubscribe)
 
         subscriber = create(:user)
         create_subscriptions_list_for(subscriber)
@@ -52,8 +52,8 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
     end
 
     context "when a user resubscribes" do
-      it "calls the resubscribe event subscriber" do
-        expect_any_instance_of(EventSubscriber).to receive(:resubscribe)
+      it "calls the resubscribe event callback" do
+        expect_any_instance_of(CallbackHandler).to receive(:resubscribe)
 
         subscriber = create(:user)
         create_subscriptions_list_for(
@@ -71,9 +71,9 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
     end
 
     context "when a user resubscribes and unsubscribes" do
-      it "calls the unsubscribe and resubscribe event subscribers" do
-        expect_any_instance_of(EventSubscriber).to receive(:unsubscribe)
-        expect_any_instance_of(EventSubscriber).to receive(:resubscribe)
+      it "calls the unsubscribe and resubscribe event callbacks" do
+        expect_any_instance_of(CallbackHandler).to receive(:unsubscribe)
+        expect_any_instance_of(CallbackHandler).to receive(:resubscribe)
 
         subscriber = create(:user)
         create_subscriptions_list_for(subscriber)

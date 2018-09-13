@@ -22,7 +22,7 @@ module Feste
     host: nil,
     email_source: :email,
     authenticate_with: nil,
-    event_subscriber: nil
+    callback_handler: nil
   }
 
   def self.configure
