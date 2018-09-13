@@ -146,7 +146,7 @@ If you would like to create callbacks for when a user unsubscribes or resubscrib
 ```ruby
 # config/initializers/feste.rb
 
-class EventSubscriber
+class CallbackHandler
   def unsubscribe(event)
     # This method is called whenever a user unsubscribes from an mailing list they were previously subscribed to.
     event[:controller] # the instance of the controller
@@ -159,7 +159,7 @@ class EventSubscriber
 end
 
 Feste.configure do |config|
-  config.event_subscriber = EventSubscriber.new
+  config.callback_handler = CallbackHandler.new
 end
 ```
 
