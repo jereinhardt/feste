@@ -11,7 +11,9 @@ module Feste
     end
 
     def update
+      events = set_callback_events
       if update_subscriptions
+        publish_callback_events(events)
         flash[:success] = "You have successfully updated your subscriptions!"
       else
         flash[:notice] = "Something went wrong!  Please try again later."
@@ -38,6 +40,55 @@ module Feste
         not(id: subscriptions_params)
       subscribed.update_all(canceled: false) && 
         unsubscribed.update_all(canceled: true)
+    end
+
+    def set_callback_events
+      events = []
+      if Feste.options[:callback_handler].present?
+        events << unsubscribe_event if user_unsubscribing_from_emails?
+        events << resubscribe_event if user_resubscribing_to_emails?
+      end
+      events
+    end
+
+    def user_unsubscribing_from_emails?
+      subscription_ids = user_params[:subscriptions]&.map(&:to_i) || []
+      subscriber.subscriptions.where(canceled: false).pluck(:id).any? do |id|
+        !subscription_ids.include?(id)
+      end
+    end
+
+    def user_resubscribing_to_emails?
+      subscription_ids = user_params[:subscriptions]&.map(&:to_i) || []
+      subscriber.subscriptions.where(canceled: true).pluck(:id).any? do |id|
+        subscription_ids.include?(id)
+      end
+    end
+
+    def unsubscribe_event
+      {
+        name: :unsubscribe,
+        subscriber: subscriber,
+        controller: self
+      }
+    end
+
+    def resubscribe_event
+      {
+        name: :resubscribe,
+        subscriber: subscriber,
+        controller: self
+      }
+    end
+
+    def publish_callback_events(events)
+      if Feste.options[:callback_handler].present?
+        events.each do |event|
+          if Feste.options[:callback_handler].respond_to?(event[:name])
+            Feste.options[:callback_handler].public_send(event[:name], event)
+          end
+        end
+      end
     end
   end
 end

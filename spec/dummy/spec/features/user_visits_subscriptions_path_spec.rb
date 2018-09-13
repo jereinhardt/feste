@@ -30,7 +30,7 @@ RSpec.feature "user visits subscriptions path" do
       end
     end
     
-    context "when she visit without a token" do
+    context "when she visits without a token" do
       scenario "and sees all subscribable mailers" do
         user = create(:user)
         inject_session(user_id: user.id)

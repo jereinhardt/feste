@@ -48,6 +48,8 @@ Feste.configure do |config|
   config.email_source = :email
   # set the host for subscription_url
   config.host = ActionMailer::Base.default_url_options[:host]
+  # set callbacks
+  config.callback_handler = FesteCallbackHandler.new
 end
 ```
 ## Usage
@@ -136,6 +138,30 @@ en:
 ### When not to use
 
 It is recommended you DO NOT include any important emails, such as password reset emails, into a subscribable category.  It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, it is assumed that each email is intended for only one recipient, and the `subscription_url` helper leads to a subsciption page meant only for that recipient.  Exposing this page to other users may allow them to change subscription preferences for someone else's account.
+
+## Callbacks
+
+If you would like to create callbacks for when a user unsubscribes or resubscribes to a mailing list, you can do so by creating a callback handler.  Callback handlers should be objects with two instance methods: `unsubscribe` and `resubscribe`.  You can register an instance of this object as your callback handler with the `callback_handler` configuration option.
+
+```ruby
+# config/initializers/feste.rb
+
+class CallbackHandler
+  def unsubscribe(event)
+    # This method is called whenever a user unsubscribes from an mailing list they were previously subscribed to.
+    event[:controller] # the instance of the controller
+    event[:subscriber] # the user that unsubscribed
+  end
+
+  def resubscribe(event)
+    # This method is called whenever a user subscribes to a mailing list they were previously unsubscribed to.
+  end
+end
+
+Feste.configure do |config|
+  config.callback_handler = CallbackHandler.new
+end
+```
 
 ## Development
 
