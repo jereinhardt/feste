@@ -84,7 +84,7 @@ module Feste
       if Feste.options[:event_subscriber].present?
         events.each do |event|
           if Feste.options[:event_subscriber].respond_to?(event[:name])
-            Feste.options[:event_subscriber].send(event[:name], event)
+            Feste.options[:event_subscriber].public_send(event[:name], event)
           end
         end
       end
