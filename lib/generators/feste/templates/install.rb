@@ -7,5 +7,9 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.boolean :canceled, null: false, default: false
       t.string :token, null: false
     end
+
+    create_table :feste_categories do |t|
+      t.string :name, null: false
+      t.text :mailers, array: true, default: []
   end
 end
