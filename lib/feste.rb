@@ -2,6 +2,7 @@ require "active_record"
 
 require "feste/version"
 require "feste/engine" if defined?(Rails)
+require "feste/admin/engine" if defined?(Rails)
 require "feste/authentication/authentication"
 require "feste/authentication/clearance"
 require "feste/authentication/custom"
