@@ -19,7 +19,10 @@ module Feste
           flash[:success] = "Successfully created #{@category.name}."
           redirect_to categories_path
         else
-          flash[:notice] = "There was an issue creating this category."
+          flash[:notice] = error_message_for(
+            @category,
+            "There was an issue creating this category."
+          )
           render :new
         end
       end
@@ -34,7 +37,10 @@ module Feste
           flash[:success] = "Successfully updated #{@category.name}"
           redirect_to categories_path
         else
-          flash[:notice] = "There was in issue updating this category"
+          flash[:notice] = error_message_for(
+            @category,
+            "There was in issue updating this category."
+          )
           render :edit
         end
       end
@@ -42,6 +48,7 @@ module Feste
       def destroy
         category = Feste::Category.find(params[:id])
         category.destroy
+        flash[:success] = "Category removed."
         redirect_to categories_path
       end
 
@@ -64,6 +71,17 @@ module Feste
         Dir[Rails.root.join("app", "mailers", "**", "*mailer.rb")].each do |f|
           require f
         end        
+      end
+
+      def error_message_for(model, preamble)
+        errors = model.errors.messages.map do |name, errors|
+          errors.reduce("") { |acc, error| "<li>#{name}: #{error}</li>" }
+        end.join("")
+        """
+        #{preamble}  Please address the following errors:
+
+        <ul>#{errors}</ul>
+        """.html_safe
       end
     end
   end
