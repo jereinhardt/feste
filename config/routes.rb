@@ -4,5 +4,5 @@ Feste::Engine.routes.draw do
 end
 
 Feste::Admin::Engine.routes.draw do
-  resources :categories, path: "/", only: [:index, :create, :update, :destroy]
+  resources :categories, path: "/", except: [:show]
 end

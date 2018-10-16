@@ -11,7 +11,7 @@ module Feste
 
     initializer "feste" do |app|
       app.config.assets.precompile << proc do |path| 
-        path =~ /\Afeste\/application\.(js|css)\z/
+        path =~ /\Afeste\/(application|admin)\.(js|css)\z/
       end
     end
   end

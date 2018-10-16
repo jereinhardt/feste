@@ -1,1 +1,1 @@
-//= require_tree .
+//= require feste/subscription-verification

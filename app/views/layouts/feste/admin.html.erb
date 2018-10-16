@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Email Subscriptions</title>
+    <meta charset="utf-8" />
+    <%= stylesheet_link_tag "feste/admin.css" %>
+    <%= javascript_include_tag "feste/admin.js" %>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <% if flash[:notice] || flash[:success] %>
+        <% message = flash[:notice] || flash[:success] %>
+          <h4 class="flash-message <%= flash[:notice].present? ? 'flash-notice' : 'flash-success' %>"><%= message %></h4>
+      <% end %>
+
+      <main class="main-body">
+        
+        <%= yield %>
+
+      </main>
+
+    </div>
+
+    <%= yield to: :javascript %>
+  </body>
+</html>
