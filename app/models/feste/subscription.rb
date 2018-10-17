@@ -1,8 +1,11 @@
 module Feste
   class Subscription < ActiveRecord::Base
     belongs_to :subscriber, polymorphic: true
+    belongs_to :category
 
     before_create :generate_token
+
+    delegate :name, to: :category, prefix: true
 
     # Return the propper subscription token based on the propper subscriber and
     # email category
@@ -13,10 +16,8 @@ module Feste
     # created, and nil is returned.
     #
     # @return [String, nil], the token or nil if a category cannot be found.
-    def self.get_token_for(subscriber, mailer, action)
+    def self.get_token_for(subscriber, category)
       transaction do
-        category = mailer.action_categories[action.to_sym] || 
-          mailer.action_categories[:all]
         subscription = Feste::Subscription.find_or_create_by(
           subscriber: subscriber,
           category: category
@@ -34,16 +35,6 @@ module Feste
       user_models.find do |model|
         model.find_by(Feste.options[:email_source] => email)
       end&.find_by(Feste.options[:email_source] => email)
-    end
-
-    # Return the human readable version of a category name.
-    #
-    # Checks to see if there is an i18n key corresponding to the category. If
-    # not, then the category is titleized.
-    #
-    # @return [String]
-    def category_name
-      I18n.t("feste.categories.#{category}", default: category.titleize)
     end
 
     private

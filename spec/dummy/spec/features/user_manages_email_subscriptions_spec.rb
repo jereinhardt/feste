@@ -1,13 +1,13 @@
 require "rails_helper"
 
-RSpec.feature "user manages email subscriptions", js: true do
+RSpec.feature "user manages email subscriptions", js: true, categories: true do
   context "when she has a token" do
     scenario "succesfully after confirming her email address" do
       user = create(:user)
       subscription = create(
         :subscription,
         subscriber: user,
-        category: :marketing_emails
+        category: Feste::Category.first
       )
 
       visit subscriptions_path(token: subscription.token)
@@ -35,7 +35,7 @@ RSpec.feature "user manages email subscriptions", js: true do
       subscription = create(
         :subscription,
         subscriber: user,
-        category: :marketing_emails
+        category: Feste::Category.first
       ) 
 
       visit subscriptions_path(token: subscription.token)

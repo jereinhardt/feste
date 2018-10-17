@@ -1,4 +1,4 @@
-class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version %>
+class UpgradeFeste < ActiveRecord::Migration[5.1]
   def up
     create_table :feste_categories do |t|
       t.string :name, null: false
@@ -41,18 +41,18 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
     if mailer.action_categories[:all]
       category_name = I18n.t(
         "feste.categories.#{mailer.action_categories[:all]}",
-        default: mailer.action_categories[:all].titleize
+        default: mailer.action_categories[:all].to_s.titleize
       )
       category = Feste::Category.find_or_create_by(name: category_name)
       mailer.action_methods.each do |method|
         category.mailers << "#{mailer}##{method}"
       end
       category.save!
-    else
+    else 
       mailer.action_categories.each do |action, category_sym|
         category_name = I18n.t(
           "feste.categories.#{category_sym}",
-          default: category_sym.titleize
+          default: category_sym.to_s.titleize
         )
         category = Feste::Category.find_or_create_by(name: category_name)
         category.mailers << "#{mailer}##{action}"

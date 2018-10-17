@@ -45,13 +45,13 @@ module Feste
       private
 
       def current_action_category
-        self.action_categories[action_name.to_sym] || 
-          self.action_categories[:all]
+        @category ||= Feste::Category.
+          find_by_mailer("#{self.class.to_s}##{action_name}")
       end
 
       def generate_subscription_token!(subscriber)
         @_subscription_token ||= Feste::Subscription.
-          get_token_for(subscriber, self, action_name)
+          get_token_for(subscriber, current_action_category)
       end
 
       def recipient_subscribed?(subscriber)

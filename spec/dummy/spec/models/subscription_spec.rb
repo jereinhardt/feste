@@ -3,22 +3,22 @@ require "rails_helper"
 RSpec.describe Feste::Subscription, type: :model do
   describe "associations" do
     it { is_expected.to belong_to(:subscriber) }
+    it { is_expected.to belong_to(:category) }
   end
 
   describe ".get_token_for" do
     context "when the subscription exists" do
       it "returns the token for the subscription" do
         user = create(:user)
+
         subscription = create(
           :subscription,
-          subscriber: user,
-          category: :reminder_emails
+          subscriber: user
         )
 
         token = Feste::Subscription.get_token_for(
           user,
-          ReminderMailer,
-          :send_reminder
+          subscription.category
         )
 
         expect(token).to eq(subscription.token)
@@ -28,16 +28,16 @@ RSpec.describe Feste::Subscription, type: :model do
     context "when the subscription does not exist" do
       it "creates a subscription and returns its token" do
         user = create(:user)
+        category = create(:category)
 
         token = Feste::Subscription.get_token_for(
           user,
-          ReminderMailer,
-          :send_reminder
+          category
         )
 
         subscription = Feste::Subscription.find_by(
           subscriber: user,
-          category: :reminder_emails
+          category: category
         )
 
         expect(subscription.token).to eq(token)

@@ -30,7 +30,7 @@ module Feste
     end
 
     def find_or_create_subscriptions
-      Feste.options[:categories].each do |category|
+      Feste::Category.with_mailers.each do |category|
         Feste::Subscription.find_or_create_by(
           subscriber: subscriber,
           category: category

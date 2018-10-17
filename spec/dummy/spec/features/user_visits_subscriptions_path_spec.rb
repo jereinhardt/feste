@@ -1,16 +1,19 @@
 require "rails_helper"
 
-RSpec.feature "user visits subscriptions path" do
+RSpec.feature "user visits subscriptions path", categories: true do
   context "when she has a user record" do
     context "when she visit with a token" do
       scenario "and sees all subscribable mailers" do
         user = create(:user)
 
-        create(:subscription, subscriber: user, category: :outreach_emails)
-        create(:subscription, subscriber: user, category: :marketing_emails)
+        outreach_cat = Feste::Category.find_by(name: "Outreach Emails")
+        marketing_cat = Feste::Category.find_by(name: "Marketing Emails")
+        reminder_cat = Feste::Category.find_by(name: "Reminder Emails")
+        create(:subscription, subscriber: user, category: outreach_cat)
+        create(:subscription, subscriber: user, category: marketing_cat)
         subscription = create(:subscription, 
           subscriber: user,
-          category: :reminder_emails,
+          category: reminder_cat,
           canceled: true
         )
 
