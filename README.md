@@ -14,16 +14,21 @@ And then execute:
     $ rails generate feste:install
     $ rake db:migrate
 
-Once installed, you will need to mount Feste in your application.
+### Mounting the Engine
+
+Feste comes with two mountable engines.  `Feste::Engine` provides the interface your users see when they manage their subscriptions.  `Feste::Admin::Engine` provides an interface you will use to sort subscribable emails into different categories.  You will need to mount both engines in your `config/routes.rb` file.
 
 ```ruby
 # config/routes.rb
+
 mount Feste::Engine => "/email-subscriptions", as: "feste"
+
+namespace :admin do
+  mount Feste::Admin::Engine => "feste", as: "feste"
+end
 ```
 
 ## Configuration
-
-Feste organizes subscribable emails by separating them into categories that you define (see <a href="#mailer">Mailer</a> for more details).  This requires an array of available categories (represented by symbols) to be provided to the `categories` configuration.
 
 Out of the box, Feste allows your users to manage their subscriptions from a url in their email, which includes an identifying token.  If you would like for them to be able to do so from within your application, you will need to provide a method for identifying the currently logged in user.  Luckily, Feste provides authentication adapters for applications that use Devise and Clearance to manage user sessions.  Otherwise, you can provide a Proc to the `authenticate_with` option.
 
@@ -36,8 +41,6 @@ authentication_method = Proc.new do |controller|
 end
 
 Feste.configure do |config|
-  # set your category names
-  config.categories = [:marketing_emails, :reminder_emails]
   # for applications that use clearance
   config.authenticate_with = :clearance
   # for applications that use devise
@@ -68,38 +71,19 @@ This will give your user model a `has_many` relationship to `subscriptions`.  Si
 
 ### Mailer
 
-In your mailer, include the `Feste::Mailer` module.
-
-Feste keeps track of email subscriptions by grouping mailer actions into categories that you define.  Your users will not be able to subscribe or unsubscribe to emails until you assign specific actions to a category.  In order to do this, you can call the `categorize` method within your mailer.  Doing so will automatically assign all actions in that mailer to the category you provide through the `as` option.
-
-When calling the `mail` method within an action, make sure to explicitly state which user the subscription should be applied to using the `subscriber` option.
+In your `ApplicationMailer`, include the `Feste::Mailer` module.
 
 ```ruby
-class CouponMailer < ApplicationMailer
+class ApplicationMailer < ActionMailer::Base
   include Feste::Mailer
-
-  categorize as: :marketing_emails
-
-  def send_coupon(user)
-    mail(to: user.email, from: "support@here.com", subscriber: user)
-  end
 end
 ```
 
-If you only want to categorize specific actions in a mailer, you can do so by listing those actions in an array as your first arguement.
+When calling the `mail` method, make sure to explicitly state which user the subscription should be applied to using the `subscriber` option.
 
 ```ruby
 class CouponMailer < ApplicationMailer
-  include Feste::Mailer
-
-  categorize [:send_coupon], as: :marketing_emails
-  categorize [:send_coupon_reminder], as: :reminder_emails
-
   def send_coupon(user)
-    mail(to: user.email, from: "support@here.com", subscriber: user)
-  end
-
-  def send_coupon_reminder(user)
     mail(to: user.email, from: "support@here.com", subscriber: user)
   end
 end
@@ -121,23 +105,6 @@ When a user clicks this link, they are taken to a page that allows them to choos
 
 The route to the subscriptions page is the root of the feste engine.  You can link to this page from anywhere in your app using the `feste.subscriptions_url` helper (assuming the engine is mounted as 'feste').  When a logged in user visits this page from your application, they will be authenticated through the method which you provide in the configuration, and shown their email subscriptions.
 
-### Human Readable Category Names
-
-In order to create category names that are human readable, add a `feste.categories`section to your i18n `locales` files.  Create keys in this section that correspond to the `categories` configuration.
-
-```yml
-# config/locales/en.yml
-
-en:
-  feste:
-    categories:
-      marketing_emails: Marketing Emails
-      reminder_emails: Reminder Emails
-```
-
-### When not to use
-
-It is recommended you DO NOT include any important emails, such as password reset emails, into a subscribable category.  It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, it is assumed that each email is intended for only one recipient, and the `subscription_url` helper leads to a subsciption page meant only for that recipient.  Exposing this page to other users may allow them to change subscription preferences for someone else's account.
 
 ## Callbacks
 
@@ -162,6 +129,35 @@ Feste.configure do |config|
   config.callback_handler = CallbackHandler.new
 end
 ```
+
+## When not to use
+
+It is recommended you DO NOT include any important emails, such as password reset emails, into a subscribable category.  It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, it is assumed that each email is intended for only one recipient, and the `subscription_url` helper leads to a subsciption page meant only for that recipient.  Exposing this page to other users may allow them to change subscription preferences for someone else's account.
+
+## Upgrading from =< 0.3.0
+
+Feste 0.4.0 uses a new paradigm for sorting emails.  Before, categories were saved as a configuration, and assigned in each mailer.  With the update in 0.4, categories are instead saved in the database, and managed in your application.  If you are updating Feste from version 0.3.0 or older, you'll need to take a few extra steps to comply with this new paradigm.
+
+### Setup
+
+First run the following commands
+
+```
+rake feste:upgrade
+rake db:migrate
+```
+
+Running `rake feste:upgrade` will generate a migration that creates a `feste_categories` table.  This migration will check all of your existing subscriptions and create create categories for them, and sort the propper emails into each category.
+
+Once you have done this, you can delete the `categories` configuration from your `initializers/feste.rb` file.
+
+Then, go to your `routes.rb` file and mount `Feste::Admin::Engine` at your preferred path.  You can then visit that route and see the categories Feste has created, and manage them accordingly.
+
+### Cutting Code
+
+Instead of including `Feste::Mailer` in each mailer that is subscribable, you will instead include it in `ApplicationMailer`.  While you are removing the included module from your individual mailers, you can also remove calls the the `categorize` method, since you won't be using it to sort emails anymore.
+
+If you had an I18n keys to make category names more readeable, you can go ahead and delete those as well.
 
 ## Development
 
