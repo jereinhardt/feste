@@ -7,10 +7,11 @@ module Feste
     def subscription_url
       host = Feste.options[:host] ||
         ActionMailer::Base.default_url_options[:host]
-      Feste::Engine.routes.url_helpers.subscriptions_url(
-        token: @_subscription_token,
-        host: host
-      )
+      if main_app.respond_to?(:subscriptions_url)
+        main_app.subscriptions_url(token: @_subscription_token, host: host)
+      else
+        feste.subscriptions_url(token: @_subscription_token, host: host)
+      end
     end
   end
 end
