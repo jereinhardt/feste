@@ -1,3 +1,10 @@
-<h1>Edit a <%= @category.name %></h1>
+<div class="row">
+  <div class="col-7">
+    <h3>Edit <%= @category.name %></h3>
+  </div>
+  <div class="col-5 text-right">
+    <%= link_to "Back to Categories", categories_path, class: "btn btn-link" %>
+  </div>  
+</div>
 
 <%= render "form", category: @category %>

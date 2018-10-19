@@ -12,10 +12,10 @@
 
       <% if flash[:notice] || flash[:success] %>
         <% message = flash[:notice] || flash[:success] %>
-          <h4 class="flash-message <%= flash[:notice].present? ? 'flash-notice' : 'flash-success' %>"><%= message %></h4>
+          <div class="alert mt-5 <%= flash[:notice].present? ? 'alert-warning' : 'alert-success' %>" role="alert"><%= message %></div>
       <% end %>
 
-      <main class="main-body">
+      <main class="main-body pt-5">
         
         <%= yield %>
 
