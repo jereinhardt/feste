@@ -1,8 +1,4 @@
 class MarketingMailer < ApplicationMailer
-  include Feste::Mailer
-
-  categorize [:send_newssletter, :send_coupon_list], as: :marketing_emails
-
   def send_newsletter(user)
     mail(to: user.email, from: "support@app.com", subscriber: user)
   end
