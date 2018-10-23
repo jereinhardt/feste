@@ -2,7 +2,14 @@ module Feste
   module Mailer    
     def self.included(klass)
       klass.include InstanceMethods
+      klass.extend ClassMethods
       klass.send(:add_template_helper, TemplateHelper)
+      klass.class_eval do
+        # NOTE: Feset::Mailer.action_categories is deprecated and will be
+        # removed in Feste 1.0
+        class_attribute :action_categories
+        self.action_categories = {}
+      end
     end
 
     module InstanceMethods
@@ -54,6 +61,78 @@ module Feste
           category: current_action_category,
           subscriber: subscriber
         )&.canceled?
+      end
+    end
+
+    module ClassMethods
+      # Assign action(s) to a category
+      # @param [Array, Symbol]
+      #
+      # NOTE: This method is deprecated and will be removed in Feste 1.0
+      #
+      # The actions in the mailer that are included in the given category can be
+      # limited by listing them in an array of symbols.
+      #
+      #     class ReminderMailer < ActionMailer::Base
+      #
+      #       categorize [:send_reminder, :send_update], as: :reminder_emails
+      #
+      #       def send_reminder(user)
+      #         ...
+      #       end
+      #
+      #       def send_update(user)
+      #         ...
+      #       end
+      #
+      #       def send_alert(user)
+      #         ...
+      #       end
+      #     end
+      #
+      #     ReminderMailer.action_categories => {
+      #       send_reminder: :reminder_emails,
+      #       send_update: :reminder_emails
+      #     }
+      #
+      # If no array is provided, all actions in the mailer will be categorized.
+      #
+      #     class ReminderMailer < ActionMailer::Base
+      #
+      #       categorize as: :reminder_emails
+      #
+      #       def send_reminder(user)
+      #         ...
+      #       end
+      #
+      #       def send_update(user)
+      #         ...
+      #       end
+      #
+      #       def send_alert(user)
+      #         ...
+      #       end
+      #     end
+      #
+      #     ReminderMailer.action_categories => { all: :reminder_emails }
+      def categorize(meths = [], as:)
+        warn(
+          "Feste::Mailer#categorize is deprecated " \
+          "and will be removed in Feste 1.0"
+        )
+        actions = meths.empty? ? [:all] : meths
+        actions.each { |action| self.action_categories[action.to_sym] = as }
+      end
+
+
+      # NOTE: When .action_categories is removed in Feste 1.0, there will be no
+      # more need for this override of #action_methods, and it will also be
+      # deleted.
+      def action_methods
+        feste_methods = %w[
+          action_categories action_categories= action_categories?
+        ]
+        Set.new(super - feste_methods)
       end
     end
   end
