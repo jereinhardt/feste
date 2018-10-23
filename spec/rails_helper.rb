@@ -26,7 +26,10 @@ RSpec.configure do |config|
     FactoryBot.create(
       :category,
       name: "Marketing Emails",
-      mailers: %w[MarketingMailer#send_newssletter MarketingMailer#send_coupon_list]
+      mailers: %w[
+        MarketingMailer#send_newsletter
+        MarketingMailer#send_coupon_list
+      ]
     )
     FactoryBot.create(
       :category,

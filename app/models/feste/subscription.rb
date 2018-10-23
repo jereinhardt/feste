@@ -10,7 +10,7 @@ module Feste
 
     delegate :name, to: :category, prefix: true
 
-    # Return the propper subscription token based on the propper subscriber and
+    # Return the proper subscription token based on the proper subscriber and
     # email category
     # @param [Subscriber, ActionMailer::Base, Symbol]
     #
