@@ -11,8 +11,12 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
     create_category_records
 
     Feste::Subscription.in_batches.each_record do |record|
-      cat = Feste::Category.find_by(name: record.category)
-      record.update(category_id: cat.id)
+      category_name = I18n.t(
+        "feste.categories.#{record.read_attribute(:category)}",
+        default: record.read_attribute(:category).titleize
+      )
+      category = Feste::Category.find_by(name: category_name)
+      record.update(category_id: category&.id)
     end
 
     remove_column :feste_subscriptions, :category
@@ -41,7 +45,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
     if mailer.action_categories[:all]
       category_name = I18n.t(
         "feste.categories.#{mailer.action_categories[:all]}",
-        default: mailer.action_categories[:all].titleize
+        default: mailer.action_categories[:all].to_s.titleize
       )
       category = Feste::Category.find_or_create_by(name: category_name)
       mailer.action_methods.each do |method|
@@ -52,7 +56,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       mailer.action_categories.each do |action, category_sym|
         category_name = I18n.t(
           "feste.categories.#{category_sym}",
-          default: category_sym.titleize
+          default: category_sym.to_s.titleize
         )
         category = Feste::Category.find_or_create_by(name: category_name)
         category.mailers << "#{mailer}##{action}"
