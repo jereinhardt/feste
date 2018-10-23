@@ -1,7 +1,10 @@
 module Feste
   class Subscription < ActiveRecord::Base
     belongs_to :subscriber, polymorphic: true
-    belongs_to :category
+    # For now, the association to a category is allowed to be optional as a
+    # contengency for applications that upgraded from 0.3.0 to 0.4.0.  This will
+    # be set to false in 1.0
+    belongs_to :category, optional: true
 
     before_create :generate_token
 

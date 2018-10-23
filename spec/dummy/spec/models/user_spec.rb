@@ -14,4 +14,21 @@ RSpec.describe User, type: :model do
       expect(user.email_source).to eq(user.email)
     end
   end
+
+  describe ".active_subscriptions" do
+    it "returns subscriptions with a category" do
+      user = create(:user)
+
+      sub_with_category = create(:subscription, subscriber: user)
+      sub_without_category = create(
+        :subscription,
+        subscriber: user,
+        category: nil
+      )
+      result = user.active_subscriptions
+
+      expect(result).to include(sub_with_category)
+      expect(result).not_to include(sub_without_category)
+    end
+  end
 end
