@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Feste::SubscriptionsController, type: :controller do
+RSpec.describe Feste::SubscriptionsController, type: :controller, categories: true do
   routes { Feste::Engine.routes }
 
   describe "#index" do
@@ -93,7 +93,7 @@ RSpec.describe Feste::SubscriptionsController, type: :controller do
   end
 
   def create_subscriptions_list_for(subscriber, options = {})
-    Feste.options[:categories].map do |cat|
+    Feste::Category.all.map do |cat|
       create(
         :subscription,
         { subscriber: subscriber, category: cat }.merge(options)

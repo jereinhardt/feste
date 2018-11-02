@@ -1,5 +1,8 @@
 Feste::Engine.routes.draw do
-  get "/", to: "subscriptions#index", as: :subscriptions
-  put "/", to: "subscriptions#update"
-  patch "/", to: "subscriptions#update"
+  resources :subscriptions, path: "/", only: [:index]
+  resource :subscriptions, path: "/", only: [:update]
+end
+
+Feste::Admin::Engine.routes.draw do
+  resources :categories, path: "/", except: [:show]
 end

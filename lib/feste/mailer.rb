@@ -5,6 +5,8 @@ module Feste
       klass.extend ClassMethods
       klass.send(:add_template_helper, TemplateHelper)
       klass.class_eval do
+        # NOTE: Feset::Mailer.action_categories is deprecated and will be
+        # removed in Feste 1.0
         class_attribute :action_categories
         self.action_categories = {}
       end
@@ -45,13 +47,13 @@ module Feste
       private
 
       def current_action_category
-        self.action_categories[action_name.to_sym] || 
-          self.action_categories[:all]
+        @category ||= Feste::Category.
+          find_by_mailer("#{self.class.to_s}##{action_name}")
       end
 
       def generate_subscription_token!(subscriber)
         @_subscription_token ||= Feste::Subscription.
-          get_token_for(subscriber, self, action_name)
+          get_token_for(subscriber, current_action_category)
       end
 
       def recipient_subscribed?(subscriber)
@@ -66,11 +68,13 @@ module Feste
       # Assign action(s) to a category
       # @param [Array, Symbol]
       #
+      # NOTE: This method is deprecated and will be removed in Feste 1.0
+      #
       # The actions in the mailer that are included in the given category can be
       # limited by listing them in an array of symbols.
       #
       #     class ReminderMailer < ActionMailer::Base
-      #       
+      #
       #       categorize [:send_reminder, :send_update], as: :reminder_emails
       #
       #       def send_reminder(user)
@@ -94,7 +98,7 @@ module Feste
       # If no array is provided, all actions in the mailer will be categorized.
       #
       #     class ReminderMailer < ActionMailer::Base
-      #       
+      #
       #       categorize as: :reminder_emails
       #
       #       def send_reminder(user)
@@ -112,10 +116,18 @@ module Feste
       #
       #     ReminderMailer.action_categories => { all: :reminder_emails }
       def categorize(meths = [], as:)
+        warn(
+          "Feste::Mailer#categorize is deprecated " \
+          "and will be removed in Feste 1.0"
+        )
         actions = meths.empty? ? [:all] : meths
         actions.each { |action| self.action_categories[action.to_sym] = as }
       end
 
+
+      # NOTE: When .action_categories is removed in Feste 1.0, there will be no
+      # more need for this override of #action_methods, and it will also be
+      # deleted.
       def action_methods
         feste_methods = %w[
           action_categories action_categories= action_categories?

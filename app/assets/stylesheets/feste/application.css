@@ -1,4 +1,6 @@
  /*
- *= require_tree .
+ *= require feste/base
+ *= require feste/modal
+ *= require feste/subscriptions
  *= require_self
  */

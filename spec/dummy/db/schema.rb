@@ -10,17 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180213224847) do
+ActiveRecord::Schema.define(version: 20181017124852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "feste_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "mailers", default: [], array: true
+  end
+
   create_table "feste_subscriptions", force: :cascade do |t|
     t.integer "subscriber_id", null: false
     t.string "subscriber_type", null: false
-    t.string "category", null: false
     t.boolean "canceled", default: false, null: false
     t.string "token", null: false
+    t.integer "category_id"
+    t.index ["category_id"], name: "index_feste_subscriptions_on_category_id"
   end
 
   create_table "users", force: :cascade do |t|

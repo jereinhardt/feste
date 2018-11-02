@@ -1,14 +1,15 @@
 require "rails_helper"
 
-RSpec.describe ReminderMailer, type: :mailer do
+RSpec.describe ReminderMailer, type: :mailer, categories: true do
   describe "#send_reminder" do
     context "when the user is unsubscribed" do
       it "does not send the email" do
         user = create(:user)
+        category = Feste::Category.find_by(name: "Reminder Emails")
         create(
           :subscription,
           canceled: true,
-          category: :reminder_emails,
+          category: category,
           subscriber: user
         )
 
@@ -21,10 +22,11 @@ RSpec.describe ReminderMailer, type: :mailer do
     context "when the user is subscribed" do
       it "has a link to the subscription path" do
         user = create(:user)
+        category = Feste::Category.find_by(name: "Reminder Emails")
         subscription = create(
           :subscription,
           canceled: false,
-          category: :reminder_emails,
+          category: category,
           subscriber: user
         )
 

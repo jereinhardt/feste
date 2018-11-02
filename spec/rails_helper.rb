@@ -22,6 +22,26 @@ RSpec.configure do |config|
   config.before(:each, type: :mailer) do
     ActionMailer::Base.default_url_options[:host] = "localhost:3000"
   end
+  config.before(:each, categories: true) do
+    FactoryBot.create(
+      :category,
+      name: "Marketing Emails",
+      mailers: %w[
+        MarketingMailer#send_newsletter
+        MarketingMailer#send_coupon_list
+      ]
+    )
+    FactoryBot.create(
+      :category,
+      name: "Outreach Emails",
+      mailers: %w[OutreachMailer#request_donation]
+    )
+    FactoryBot.create(
+      :category,
+      name: "Reminder Emails",
+      mailers: %w[ReminderMailer#send_reminder]
+    )
+  end
 end
 
 Capybara.javascript_driver = :webkit
