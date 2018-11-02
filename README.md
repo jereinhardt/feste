@@ -147,7 +147,7 @@ rails g feste:upgrade
 rake db:migrate
 ```
 
-Running `rails g feste:upgrade` will generate a migration that creates a `feste_categories` table.  This migration will check all of your existing subscriptions and create create categories for them, and sort the propper emails into each category.
+Running `rails g feste:upgrade` will generate a migration that creates a `feste_categories` table.  This migration will check all of your existing subscriptions and create categories for them, and sort the propper emails into each category.
 
 Once you have done this, you can delete the `categories` configuration from your `initializers/feste.rb` file.
 
@@ -159,7 +159,7 @@ Instead of including `Feste::Mailer` in each mailer that is subscribable, you wi
 
 If you had an I18n keys to make category names more readeable, you can go ahead and delete those as well.
 
-### A NOTE ON DATABSE MIGRATIONS AND UPDATING FROM 0.3 to > 0.4
+### A NOTE ON DATABASE MIGRATIONS AND UPDATING FROM 0.3 to > 0.4
 
 The update to 0.4 introduces the deprecation of certain methods and attributes on mailer classes that are no longer needed for managing email categories.  However, the database migration created by `rails g feste:upgrade` requires these deprecated methods remain in place durring the migration.  The purpose of this migration is to update your database while still preserving your users' data.  The methods being deprecated will not serve a purpose going forward, but in the update, they help parse the categories you are currently using in production and build accurate relations to corresponding subscriptions and users.  These methods can be removed once the migrations have been run.
 
