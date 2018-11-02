@@ -134,20 +134,20 @@ end
 
 It is recommended you DO NOT include any important emails, such as password reset emails, into a subscribable category.  It is also recommended you do not include the subscription link in any email that is sent to multiple recipients.  Though Feste comes with some security measures, it is assumed that each email is intended for only one recipient, and the `subscription_url` helper leads to a subsciption page meant only for that recipient.  Exposing this page to other users may allow them to change subscription preferences for someone else's account.
 
-## Upgrading from =< 0.3.0
+## Upgrading from 0.3 to 0.4
 
-Feste 0.4.0 uses a new paradigm for sorting emails.  Before, categories were saved as a configuration, and assigned in each mailer.  With the update in 0.4, categories are instead saved in the database, and managed in your application.  If you are updating Feste from version 0.3.0 or older, you'll need to take a few extra steps to comply with this new paradigm.
+Feste 0.4.0 uses a new paradigm for sorting emails.  Before, categories were saved as a configuration, and assigned in each mailer.  With the update in 0.4, categories are instead saved in the database, and managed in your application.  If you are updating Feste from version 0.3 to 0.4, you'll need to take a few extra steps to comply with this new paradigm.
 
 ### Setup
 
 First run the following commands
 
 ```
-rake feste:upgrade
+rails g feste:upgrade
 rake db:migrate
 ```
 
-Running `rake feste:upgrade` will generate a migration that creates a `feste_categories` table.  This migration will check all of your existing subscriptions and create create categories for them, and sort the propper emails into each category.
+Running `rails g feste:upgrade` will generate a migration that creates a `feste_categories` table.  This migration will check all of your existing subscriptions and create create categories for them, and sort the propper emails into each category.
 
 Once you have done this, you can delete the `categories` configuration from your `initializers/feste.rb` file.
 
@@ -158,6 +158,12 @@ Then, go to your `routes.rb` file and mount `Feste::Admin::Engine` at your prefe
 Instead of including `Feste::Mailer` in each mailer that is subscribable, you will instead include it in `ApplicationMailer`.  While you are removing the included module from your individual mailers, you can also remove calls the the `categorize` method, since you won't be using it to sort emails anymore.
 
 If you had an I18n keys to make category names more readeable, you can go ahead and delete those as well.
+
+### A NOTE ON DATABSE MIGRATIONS AND UPDATING FROM 0.3 to > 0.4
+
+The update to 0.4 introduces the deprecation of certain methods and attributes on mailer classes that are no longer needed for managing email categories.  However, the database migration created by `rails g feste:upgrade` requires these deprecated methods remain in place durring the migration.  The purpose of this migration is to update your database while still preserving your users' data.  The methods being deprecated will not serve a purpose going forward, but in the update, they help parse the categories you are currently using in production and build accurate relations to corresponding subscriptions and users.  These methods can be removed once the migrations have been run.
+
+It should be noted that these deprectaed methods will be removed completely in 1.0.  Once that happens, if you are planning on upgrading from 0.3 to 1.0 or higher, you will first need to update to 0.4, run the migrations, then update to your desired version number.
 
 ## Development
 
