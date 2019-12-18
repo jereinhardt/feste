@@ -10,9 +10,7 @@ module Feste
     end
 
     initializer "feste" do |app|
-      app.config.assets.precompile << proc do |path| 
-        path =~ /\Afeste\/application\.(js|css)\z/
-      end
+      app.config.assets.precompile += %w(feste/application.css feste/application.js)
     end
   end
 end
