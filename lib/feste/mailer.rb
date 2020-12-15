@@ -3,7 +3,8 @@ module Feste
     def self.included(klass)
       klass.include InstanceMethods
       klass.extend ClassMethods
-      klass.send(:add_template_helper, TemplateHelper)
+      klass.include TemplateHelper
+      klass.helper TemplateHelper
       klass.class_eval do
         class_attribute :action_categories
         self.action_categories = {}
