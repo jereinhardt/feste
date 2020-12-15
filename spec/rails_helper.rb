@@ -24,7 +24,19 @@ RSpec.configure do |config|
   end
 end
 
-Capybara.javascript_driver = :webkit
+Capybara.register_driver :headless_chrome do |app|
+  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+    chromeOptions: {
+      args: %w[headless enable-features=NetworkService,NetworkServiceInProcess]
+    }
+  )
+
+  Capybara::Selenium::Driver.new app,
+    browser: :chrome,
+    desired_capabilities: capabilities
+end
+
+Capybara.javascript_driver = :headless_chrome
 Capybara.default_max_wait_time = 6
 
 Shoulda::Matchers.configure do |config|
