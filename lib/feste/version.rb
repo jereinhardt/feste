@@ -1,3 +1,3 @@
 module Feste
-  VERSION = "0.4.1"
-end 
+  VERSION = "0.4.2"
+end
